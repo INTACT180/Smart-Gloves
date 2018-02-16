@@ -1,6 +1,6 @@
 # Smart-Gloves (in-development)
 
-##What is Smart-Gloves
+## What is Smart-Gloves
 Smart Gloves will be designed to monitor and track a user’s form for a variety of
 weightlifting exercises, ensuring proper execution and maximizing potential benefits while minimizing
 the risk of injury. A robust inertial measurement unit mounted on a small PCB will track the movement
