@@ -12,31 +12,14 @@
  any redistribution
 *********************************************************************/
 #include <bluefruit.h>
-#include <Adafruit_Sensor.h>
-#include <Adafruit_BNO055.h>
-#include <utility/imumaths.h>
+#include "BNOAbstraction.h"
 
 // BLE Service
 BLEDis  bledis;
 BLEUart bleuart;
 BLEBas  blebas;
 
-#define BNO055_SAMPLERATE_DELAY_MS (100)
-
-Adafruit_BNO055 bno = Adafruit_BNO055(55);
-
-const adafruit_bno055_offsets_t calibrationSettings= {7,
-  65509,
-  20,
-  339,
-  226,
-  268,
-  0,
-  0,
-  65534,
-  1000,
-  826,};
-
+BNOAbstraction bno;
 sensors_event_t event;
 uint8_t *ort[3];
 
@@ -48,9 +31,6 @@ void setup()
   Serial.begin(115200);
   Serial.println("Bluefruit52 BLEUART Example");
   Serial.println("---------------------------\n");
-  
-  initBNO();
-
   // Initialize blinkTimer for 1000 ms and start it
   blinkTimer.begin(1000, blink_timer_callback);
   blinkTimer.start();
@@ -61,6 +41,7 @@ void setup()
   Bluefruit.autoConnLed(true);
 
   Bluefruit.begin();
+  bno.begin();
   // Set max power. Accepted values are: -40, -30, -20, -16, -12, -8, -4, 0, 4
   Bluefruit.setTxPower(4);
   Bluefruit.setName("Bluefruit52");
@@ -206,46 +187,5 @@ void blink_timer_callback(TimerHandle_t xTimerID)
 void rtos_idle_callback(void)
 {
   
-}
-
-void initBNO(void)
-{
-   /* Initialise the sensor */
-  if(!bno.begin())
-  {
-    /* There was a problem detecting the BNO055 ... check your connections */
-    Serial.print("Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!");
-    while(1);
-  }
-   
-  delay(1000);
-
-  /* Use external crystal for better accuracy */
-  bno.setExtCrystalUse(true);
-  /* Display some basic information on this sensor */
-  displaySensorDetails();
-  /*Set Sensor offsets to the saved value*/
-  bno.setSensorOffsets(calibrationSettings);
-  bno.getEvent(&event);
-  
-  ort[0] = (uint8_t*) (&event.orientation.x);
-  ort[1] = (uint8_t*) (&event.orientation.y);
-  ort[2] = (uint8_t*) (&event.orientation.z);
-  
-}
-void displaySensorDetails(void)
-{
-  sensor_t sensor;
-  bno.getSensor(&sensor);
-  Serial.println("------------------------------------");
-  Serial.print  ("Sensor:       "); Serial.println(sensor.name);
-  Serial.print  ("Driver Ver:   "); Serial.println(sensor.version);
-  Serial.print  ("Unique ID:    "); Serial.println(sensor.sensor_id);
-  Serial.print  ("Max Value:    "); Serial.print(sensor.max_value); Serial.println(" xxx");
-  Serial.print  ("Min Value:    "); Serial.print(sensor.min_value); Serial.println(" xxx");
-  Serial.print  ("Resolution:   "); Serial.print(sensor.resolution); Serial.println(" xxx");
-  Serial.println("------------------------------------");
-  Serial.println("");
-  delay(500);
 }
 
