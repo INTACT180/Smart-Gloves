@@ -352,7 +352,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1132789853}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0c60497b88c6453c86214cc5a16396a, type: 3}
+  m_Script: {fileID: 11500000, guid: e25ca9a28963347af82f5e91cc86e663, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   DeviceName: Bluefruit52
