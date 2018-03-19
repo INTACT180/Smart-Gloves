@@ -5,15 +5,24 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
-    path: Assets/_Scenes/cube_rotation.unity
-    guid: 44128943a1f52475ab3407c863ffb530
-  - enabled: 1
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
+  - enabled: 0
     path: Assets/_Scenes/doulbe_cube_rotation.unity
     guid: dd49d1ea82f324848b138bc87cd62881
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
+  - enabled: 0
+    path: Assets/_Scenes/cube_rotation.unity
+    guid: b5e723d8c20af4e9689b9575f7cebf10
   - enabled: 1
     path: Assets/_Scenes/Stop.unity
-    guid: d863ded0a8f5a48ed8e5effa17706696
+    guid: 2f843d7359d07470d887351d67da66b5
   - enabled: 1
     path: Assets/_Scenes/Start.unity
-    guid: 1f880e373330a446bb5ce4e85011e743
+    guid: 12e7a2b61046348c6b238f1ba543d507
