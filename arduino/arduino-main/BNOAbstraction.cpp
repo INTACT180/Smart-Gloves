@@ -40,12 +40,13 @@ void BNOAbstraction::displayCalStatus(void)
       Serial.print("! ");
   }
 
+  Serial.print("\t");
   /* Display the individual values */
   Serial.print("Sys:");
   Serial.print(system, DEC);
-  Serial.print(" G:");
+  Serial.print(" Gyro:");
   Serial.print(gyro, DEC);
-  Serial.print(" A:");
+  Serial.print(" Accel:");
   Serial.print(accel, DEC);
   Serial.print(" M:");
   Serial.print(mag, DEC);
@@ -91,6 +92,172 @@ void BNOAbstraction::writeCalibrationDataToFile(adafruit_bno055_offsets_t newCal
   }
 }
 
+void BNOAbstraction::getCurrentPosition(xyz *pos)
+{
+  *pos = currentPosition;
+}
+
+
+
+xyz* BNOAbstraction::calculatePosition()
+{
+//
+//    Serial.print("Time Delta: ");
+//    Serial.print(period, 7);
+//    Serial.print("\t\t");
+
+  //uint32_t ts0=millis();
+//  int it=0;
+  
+// while(true)
+  {
+    dataSample = bno.getVector(Adafruit_BNO055::VECTOR_LINEARACCEL);
+    postAccelerationData.x = dataSample.x();
+    postAccelerationData.y = dataSample.y();
+    postAccelerationData.z = dataSample.z();
+  
+    // X Axis Deadzone
+    if((postAccelerationData.x <= 0.1) && (postAccelerationData.x >= -0.1))
+      postAccelerationData.x = 0;
+
+    // Y Axis Deadzone
+    if((postAccelerationData.y <= 0.1) && (postAccelerationData.y >= -0.1))
+      postAccelerationData.y = 0;
+
+    // Z Axis Deadzone
+    if((postAccelerationData.z <= 0.1) && (postAccelerationData.z >= -0.1))
+      postAccelerationData.z = 0;
+
+//    Serial.print("Acceleration X: ");
+//    Serial.print(postAccelerationData.x,4);
+//    Serial.print("\t\t");
+//
+//    Serial.print("Acceleration Y: ");
+//    Serial.print(postAccelerationData.y,4);
+//    Serial.print("\t\t");
+//
+//    Serial.print("Acceleration Z: ");
+//    Serial.print(postAccelerationData.z,4);
+//    Serial.print("\t\t");
+
+    // X Axis First Integration
+    postVelocityData.x = preVelocityData.x + ((postAccelerationData.x + preAccelerationData.x)/2.0f*period);
+
+    // Y Axis First Integration
+    postVelocityData.y = preVelocityData.y + ((postAccelerationData.y + preAccelerationData.y)/2.0f*period);
+
+    // Z Axis First Integration
+    postVelocityData.z = preVelocityData.z + ((postAccelerationData.z + preAccelerationData.z)/2.0f*period);
+   
+    // X Axis Second Integration
+    postPositionData.x = prePositionData.x + ((postVelocityData.x + preVelocityData.x)/2.0f*period);
+
+    // Y Axis Second Integration
+    postPositionData.y = prePositionData.y + ((postVelocityData.y + preVelocityData.y)/2.0f*period);
+
+    // Z Axis Second Integration
+    postPositionData.z = prePositionData.z + ((postVelocityData.z + preVelocityData.z)/2.0f*period);
+
+//    Serial.print("Position X: ");
+//    Serial.print(postPositionData.x,4);
+//    Serial.print("\t\t");
+//
+//    Serial.print("Position Y: ");
+//    Serial.print(postPositionData.y,4);
+//    Serial.print("\t\t");
+//
+//    Serial.print("Position Z: ");
+//    Serial.print(postPositionData.z,4);
+//    Serial.print("\t\t");
+    
+    preAccelerationData = postAccelerationData;
+    preVelocityData = postVelocityData;
+
+    // X Axis movement end check
+    if(postAccelerationData.x == 0)
+      counter.x++;
+      
+    else
+      counter.x = 0;
+
+    if(counter.x >= 3)
+    {
+      postVelocityData.x = 0;
+      preVelocityData.x = 0;
+    }
+
+    // Y Axis movement end check
+    if(postAccelerationData.y == 0)
+      counter.y++;
+      
+    else
+      counter.y = 0;
+
+    if(counter.y >= 3)
+    {
+      postVelocityData.y = 0;
+      preVelocityData.y = 0;
+    }
+
+    //Z Axis movement end check
+    if(postAccelerationData.z == 0)
+      counter.z++;
+      
+    else
+      counter.z = 0;
+
+    if(counter.z >= 3)
+    {
+      postVelocityData.z = 0;
+      preVelocityData.z = 0;
+    }
+    
+    prePositionData = postPositionData;
+//
+//    if(it++ >=100)
+//    {
+//      it=0;
+//      uint32_t ts1 = millis() -ts0;
+//
+//      Serial.println(ts1);
+//     // ts0=millis();
+//    }
+
+    delay(9);
+  }
+
+   return &postPositionData;
+}
+
+void BNOAbstraction::update()
+{
+    
+    if(iteration++ >=100)
+    {
+      iteration=0;
+      uint32_t ts1 = millis();
+
+      period = ((float) (ts1 - ts0))/1000.0f/100.0f;
+      
+      Serial.print(ts1-ts0);
+      Serial.print(" ");
+
+      ts0=ts1;
+      Serial.print(period,7);
+      Serial.print( " period \n");
+    }
+//    Serial.print (iteration);
+//    Serial.print ("\t ");
+
+  
+  bno.getEvent(&eventTemp);
+  event = eventTemp;
+  
+  xyz *tempXYZ = calculatePosition();
+  currentPosition = *tempXYZ;
+
+}
+
 bool BNOAbstraction::begin()
 {
   /* Initialize the sensor */
@@ -103,6 +270,7 @@ bool BNOAbstraction::begin()
 
   // begin using file system... must be called after Bluefruit.begin();
   Nffs.begin();
+  //Nffs.format();
 
   // check if and then restore calibration values
   if(restoreCalibrationValues())
@@ -119,11 +287,11 @@ bool BNOAbstraction::begin()
     {
       bno.getEvent(&event);
 
-      Serial.print("X: ");
+      Serial.print("X/H: ");
       Serial.print(event.orientation.x, 4);
-      Serial.print("\tY: ");
+      Serial.print("\tY/P: ");
       Serial.print(event.orientation.y, 4);
-      Serial.print("\tZ: ");
+      Serial.print("\tZ/R: ");
       Serial.print(event.orientation.z, 4);
 
       /* Optional: Display calibration status */
@@ -145,11 +313,45 @@ bool BNOAbstraction::begin()
     Serial.println("\n\nStoring calibration data to NFFS...");
 
     writeCalibrationDataToFile(newCalib);
+
+  /// Setting of Update values
+    preAccelerationData.x = 0;
+    preAccelerationData.y = 0;
+    preAccelerationData.z = 0;
+  
+    postAccelerationData.x = 0;
+    postAccelerationData.y = 0;
+    postAccelerationData.z = 0;
+  
+    preVelocityData.x = 0;
+    preVelocityData.y = 0;
+    preVelocityData.z = 0;
+  
+    postVelocityData.x = 0;
+    postVelocityData.y = 0;
+    postVelocityData.z = 0;
+  
+    prePositionData.x = 0;
+    prePositionData.y = 0;
+    prePositionData.z = 0;
+  
+    postPositionData.x = 0;
+    postPositionData.y = 0;
+    postPositionData.z = 0;
+    
+    postPositionData.x = 0;
+    postPositionData.y = 0;
+    postPositionData.z = 0;
+
+    counter.x = 0;
+    counter.y = 0;
+    counter.z = 0;
+    
   }
 
 }
 
-bool BNOAbstraction::getEvent(sensors_event_t *event)
+void BNOAbstraction::getEvent(sensors_event_t *evt)
   {
-    bno.getEvent(event);
+   *evt = event;
   }

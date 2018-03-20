@@ -13,6 +13,9 @@ public class SimpleTest : MonoBehaviour
 	public string ServiceUUID =         "6E400001-B5A3-F393-E0A9-E50E24DCCA9E";
 	public string ReadCharacteristic =  "6E400003-B5A3-F393-E0A9-E50E24DCCA9E";
 	public string WriteCharacteristic = "6E400002-B5A3-F393-E0A9-E50E24DCCA9E";
+	public float scale = 1.0f;
+
+	public bool position = false;
 
 	enum States
 	{
@@ -28,6 +31,10 @@ public class SimpleTest : MonoBehaviour
 
 	private bool _connected = false;
 	private float _timeout = 0f;
+	private float pos_x = 0f;
+	private float pos_y = 0f;
+	private float pos_z = 0f;
+
 	private States _state = States.None;
 	private string _deviceAddress;
 	private bool _foundSubscribeID = false;
@@ -261,17 +268,40 @@ public class SimpleTest : MonoBehaviour
 
 	void ReactToInput(byte[] bytes)
 	{
-		if(bytes[0] == 'O')
-		{
+
+
+
+		if (bytes [0] == 'O') {
 			float x = BitConverter.ToSingle (bytes, 1);
 			float y = BitConverter.ToSingle (bytes, 5);
 			float z = BitConverter.ToSingle (bytes, 9);
-			print (x + "\n" + y + "\n" + z);
 
-			Vector3 target = new Vector3(-y, z, -x);
+			//print (x + "\n" + y + "\n" + z);
+
+			Vector3 target = new Vector3 (-y, z, -x);
 			transform.eulerAngles = target;
 
+
+
+		} else if (position && bytes [0] == 'P') {
+			float newPos_x = BitConverter.ToSingle (bytes, 1);
+			float newPos_z = BitConverter.ToSingle (bytes, 5);
+			float newPos_y = BitConverter.ToSingle (bytes, 9);
+
+			print (newPos_x + "\n" + newPos_y + "\n" + newPos_z);
+
+			Vector3 deltaPosition = new Vector3 (newPos_x - pos_x, newPos_y - pos_y, newPos_z - pos_z);
+			deltaPosition *= 50;
+			transform.position += deltaPosition;
+
+			pos_x = newPos_x;
+			pos_y = newPos_y;
+			pos_z = newPos_z;
 		}
+	}
+
+	public void resetPosition (){
+		transform.position = new Vector3 (0f, 0f, 8.21f);
 	}
 
 }

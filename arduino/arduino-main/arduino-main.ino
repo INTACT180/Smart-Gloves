@@ -21,7 +21,9 @@ BLEBas  blebas;
 
 BNOAbstraction bno;
 sensors_event_t event;
+xyz posEvent;
 uint8_t *ort[3];
+uint8_t *pos[3];
 
 // Software Timer for blinking RED LED
 SoftwareTimer blinkTimer;
@@ -42,6 +44,10 @@ void setup()
 
   Bluefruit.begin();
   bno.begin();
+
+  //while(true){bnoThread();}
+  Scheduler.startLoop(bnoThread);
+  
   // Set max power. Accepted values are: -40, -30, -20, -16, -12, -8, -4, 0, 4
   Bluefruit.setTxPower(4);
   Bluefruit.setName("Bluefruit52");
@@ -109,20 +115,40 @@ void loop()
   buf[0] = 'O';
 
   bno.getEvent(&event);
+  bno.getCurrentPosition(&posEvent);
   
   ort[0] = (uint8_t*) (&event.orientation.x);
   ort[1] = (uint8_t*) (&event.orientation.y);
   ort[2] = (uint8_t*) (&event.orientation.z);
+
+  pos[0] = (uint8_t*) (&posEvent.x);
+  pos[1] = (uint8_t*) (&posEvent.y);
+  pos[2] = (uint8_t*) (&posEvent.z);
   
+//  for(int i=0; i< 3; i++)
+//  {
+//    for(int j=0; j<4;j++)
+//    {
+//      buf[count++] = ort[i][j];
+//    }
+//  }
+
+  buf[0] = 'P';
+
   for(int i=0; i< 3; i++)
   {
     for(int j=0; j<4;j++)
     {
-      buf[count++] = ort[i][j];
+      buf[count++] = pos[i][j];
     }
   }
 
-  //int count = Serial.readBytes(buf, sizeof(buf));
+//  Serial.print(buf[count-1]);
+//
+//  //int count = Serial.readBytes(buf, sizeof(buf));
+//  Serial.print(" ");
+//  Serial.println(count);
+
   bleuart.write( buf, count );
 
   // Forward from BLEUART to HW Serial
@@ -132,7 +158,7 @@ void loop()
     ch = (uint8_t) bleuart.read();
     Serial.write(ch);
   }
-
+//  Serial.println("bluetooth");
   // Request CPU to enter low-power mode until an event/interrupt occurs
   waitForEvent();
 }
@@ -153,6 +179,13 @@ void disconnect_callback(uint16_t conn_handle, uint8_t reason)
 
   Serial.println();
   Serial.println("Disconnected");
+}
+
+void bnoThread()
+{
+  bno.update();
+
+   delay(9);
 }
 
 /**
@@ -188,4 +221,5 @@ void rtos_idle_callback(void)
 {
   
 }
+
 
