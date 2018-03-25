@@ -9,30 +9,35 @@ public class CentralScript : MonoBehaviour
 	public CentralRFduinoScript PanelCentralRFduino;
 	public CentralTISensorTagScript PanelCentralTISensorTag;
 	public CentralNordicScript PanelCentralNordic;
+	public Transform PanelInactive;
 	public GameObject CentralPeripheralButtonPrefab;
 	public Text TextScanButton;
+
+	public LevelManager levelManager;
 
 	private Dictionary<string, CentralPeripheralButtonScript> _peripheralList;
 	private bool _scanning = false;
 
 	public void Initialize ()
 	{
-		BluetoothLEHardwareInterface.Initialize (true, false, () => {
+		/*BluetoothLEHardwareInterface.Initialize (true, false, () => {
 			
 		}, (error) => {
-		});
+		});*/
 	}
 
 	public void OnBack ()
 	{
 		RemovePeripherals ();
 
+		levelManager.LoadLevel ("GloveConfig");
+
 		if (_scanning)
 			OnScan (); // this will stop scanning
 
-		BluetoothLEHardwareInterface.DeInitialize (() => {
-			BLETestScript.Show (PanelTypeSelection);
-		});
+		//BluetoothLEHardwareInterface.DeInitialize (() => {
+		//	BLETestScript.Show (PanelTypeSelection);
+//		});
 	}
 
 	protected string BytesToString (byte[] bytes)
@@ -102,6 +107,7 @@ public class CentralScript : MonoBehaviour
 			script.PanelCentralRFduino = PanelCentralRFduino;
 			script.PanelCentralTISensorTag = PanelCentralTISensorTag;
 			script.PanelCentralNordic = PanelCentralNordic;
+			script.PanelInactive = PanelInactive;
 			peripheralObject.transform.SetParent (PanelScrollContents);
 			peripheralObject.transform.localScale = new Vector3 (1f, 1f, 1f);
 

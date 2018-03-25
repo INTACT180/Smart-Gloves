@@ -20,7 +20,8 @@ BLEUart bleuart;
 BLEBas  blebas;
 
 BNOAbstraction bno;
-sensors_event_t event;
+//sensors_event_t event;
+xyz orEvent;
 xyz posEvent;
 uint8_t *ort[3];
 uint8_t *pos[3];
@@ -45,7 +46,7 @@ void setup()
   Bluefruit.begin();
   bno.begin();
 
-  //while(true){bnoThread();}
+  //while(true){bno.matLabDataOutput();}
   Scheduler.startLoop(bnoThread);
   
   // Set max power. Accepted values are: -40, -30, -20, -16, -12, -8, -4, 0, 4
@@ -114,34 +115,35 @@ void loop()
   int count = 1;
   buf[0] = 'O';
 
-  bno.getEvent(&event);
+  bno.getOrientation(&orEvent);
   bno.getCurrentPosition(&posEvent);
   
-  ort[0] = (uint8_t*) (&event.orientation.x);
-  ort[1] = (uint8_t*) (&event.orientation.y);
-  ort[2] = (uint8_t*) (&event.orientation.z);
+  ort[0] = (uint8_t*) (&orEvent.x);
+  ort[1] = (uint8_t*) (&orEvent.y);
+  ort[2] = (uint8_t*) (&orEvent.z);
+  
 
   pos[0] = (uint8_t*) (&posEvent.x);
   pos[1] = (uint8_t*) (&posEvent.y);
   pos[2] = (uint8_t*) (&posEvent.z);
   
-//  for(int i=0; i< 3; i++)
-//  {
-//    for(int j=0; j<4;j++)
-//    {
-//      buf[count++] = ort[i][j];
-//    }
-//  }
-
-  buf[0] = 'P';
-
   for(int i=0; i< 3; i++)
   {
     for(int j=0; j<4;j++)
     {
-      buf[count++] = pos[i][j];
+      buf[count++] = ort[i][j];
     }
   }
+
+//  buf[0] = 'P';
+//
+//  for(int i=0; i< 3; i++)
+//  {
+//    for(int j=0; j<4;j++)
+//    {
+//      buf[count++] = pos[i][j];
+//    }
+//  }
 
 //  Serial.print(buf[count-1]);
 //

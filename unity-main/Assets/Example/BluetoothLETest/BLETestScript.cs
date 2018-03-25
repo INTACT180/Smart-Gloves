@@ -6,7 +6,9 @@ public class BLETestScript : MonoBehaviour
 {
 	public Transform PanelActive;
 	public Transform PanelInActive;
-	public Transform PanelTypeSelection;
+	public Transform PanelCentral;
+
+//	public CentralScript PanelCentral;
 
 	static private BLETestScript _bleTestSCript;
 	static public void Show (Transform panel)
@@ -31,7 +33,12 @@ public class BLETestScript : MonoBehaviour
 	void Start ()
 	{
 		BusyScript.IsBusy = false;
-		Show (PanelTypeSelection);
+		Show (PanelCentral);
+
+
+
+
+
 	}
 	
 	// Update is called once per frame
