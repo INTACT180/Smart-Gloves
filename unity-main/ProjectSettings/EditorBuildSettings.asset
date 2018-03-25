@@ -6,9 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 0
-    path: 
-    guid: 00000000000000000000000000000000
-  - enabled: 0
     path: Assets/_Scenes/doulbe_cube_rotation.unity
     guid: dd49d1ea82f324848b138bc87cd62881
   - enabled: 0
@@ -29,6 +26,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/_Scenes/Create_Edit_Workout.unity
     guid: 1e96290049f84487487821c8ac00ffd7
+  - enabled: 1
+    path: Assets/_Scenes/Create_Exercise.unity
+    guid: c7399490d8e9d486c82975b9348bb222
   - enabled: 1
     path: Assets/_Scenes/Settings.unity
     guid: 8a1f6ab1034004043850b8f4e4671f3c
