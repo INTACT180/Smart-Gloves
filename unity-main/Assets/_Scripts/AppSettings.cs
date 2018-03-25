@@ -68,23 +68,30 @@ public class AppSettings : MonoBehaviour {
 //	}
 
 	public void save () {
-		
+
 		BinaryFormatter binaryFormatter = new BinaryFormatter();
 		FileStream file = File.Open (Application.persistentDataPath + "/workoutTable.dat", FileMode.Open);
-		WorkoutList workoutTable = (WorkoutList) binaryFormatter.Deserialize(file);
-
-		// TODO: Insert a workout to the list.
-		//		Workout workout = new Workout ();
-		//		workout.workoutName = this.workoutNameField.text;
-		//		workout.numberOfSets = this.numberOfSetsField.text;
-		//		workout.startTimer = this.startTimerField.text;
-		//		workout.restTimer = this.restTimerField.text;
-
-		//		binaryFormatter.Serialize (file, workout);
-
-
-
+		WorkoutList workoutHistory = (WorkoutList) binaryFormatter.Deserialize(file);
 		file.Close ();
+
+
+		Debug.Log ("The current length of the workoutTable is: " + workoutHistory.workoutTable.Count);
+
+		List<String> workoutDetailsList = new List<String> ();
+		workoutDetailsList.Add (this.workoutNameField.text);
+		workoutDetailsList.Add (this.numberOfSetsField.text);
+		workoutDetailsList.Add (this.startTimerField.text);
+		workoutDetailsList.Add (this.restTimerField.text);
+
+		workoutHistory.workoutTable.Add (this.workoutNameField.text, workoutDetailsList);
+
+		Debug.Log ("This is the table size before insertion: " + workoutHistory.workoutTable.Count);
+			
+		file = File.Create (Application.persistentDataPath + "/workoutTable.dat");
+		binaryFormatter.Serialize (file, workoutHistory);
+		file.Close ();
+
+		debugText.text = "Inserted into the workout table file.";
 	}
 
 //	public void Load () {

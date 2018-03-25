@@ -471,7 +471,6 @@ GameObject:
   - component: {fileID: 351347826}
   - component: {fileID: 351347825}
   - component: {fileID: 351347824}
-  - component: {fileID: 351347827}
   m_Layer: 5
   m_Name: Debug Text
   m_TagString: Untagged
@@ -566,22 +565,6 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 351347822}
---- !u!114 &351347827
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 351347822}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 559f50fc654a54853aeab610d6661d55, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  workoutNameField: {fileID: 0}
-  numberOfSetsField: {fileID: 0}
-  startTimerField: {fileID: 0}
-  restTimerField: {fileID: 0}
-  debugText: {fileID: 0}
 --- !u!1 &364619147
 GameObject:
   m_ObjectHideFlags: 0
@@ -742,7 +725,6 @@ GameObject:
   - component: {fileID: 593119405}
   - component: {fileID: 593119404}
   - component: {fileID: 593119403}
-  - component: {fileID: 593119407}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -841,22 +823,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &593119407
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 593119402}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 559f50fc654a54853aeab610d6661d55, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  workoutNameField: {fileID: 0}
-  numberOfSetsField: {fileID: 0}
-  startTimerField: {fileID: 0}
-  restTimerField: {fileID: 0}
-  debugText: {fileID: 351347825}
 --- !u!1 &776966538
 GameObject:
   m_ObjectHideFlags: 0
