@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using System;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
+using UnityEngine.SceneManagement;
 
 public class EditWorkouts : MonoBehaviour {
 
@@ -38,8 +39,9 @@ public class EditWorkouts : MonoBehaviour {
 				// Give the buttons an action to load a screen that displays its details. 
 				button.GetComponent<Button> ().onClick.AddListener (
 					() => {
-						
-						Debug.Log(button.GetComponentInChildren<Text> ().text + " button was pressed.");
+						ViewExerciseDetails.exerciseName = button.GetComponentInChildren<Text> ().text;
+						SceneManager.LoadScene("ViewExeciseDetails");
+//						Debug.Log(button.GetComponentInChildren<Text> ().text + " button was pressed.");
 					}
 				);
 
