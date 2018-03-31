@@ -15,10 +15,11 @@ public class EditWorkouts : MonoBehaviour {
 
 	public Hashtable listOfWorkouts;
 	public string message;
+	public Text pageTitle;
 
 	// Use this for initialization
 	void Start () {
-			
+		
 		// Check if the file exists.
 		if (File.Exists (Application.persistentDataPath + "/workoutTable.dat")) {
 
@@ -39,17 +40,21 @@ public class EditWorkouts : MonoBehaviour {
 				// Give the buttons an action to load a screen that displays its details. 
 				button.GetComponent<Button> ().onClick.AddListener (
 					() => {
-						ViewExerciseDetails.exerciseName = button.GetComponentInChildren<Text> ().text;
-						SceneManager.LoadScene("ViewExeciseDetails");
-//						Debug.Log(button.GetComponentInChildren<Text> ().text + " button was pressed.");
+						if (pageTitle.text.Equals ("Create/Edit Workout")) {
+							goToViewExerciseDetailsScene (button);
+						} else if (pageTitle.text.Equals ("Select Exercise")) {
+							Debug.Log ("Going to the selected workout: " + button.GetComponentInChildren<Text> ().text);
+						}
 					}
 				);
-
 				button.transform.parent = menuPanel;
-			
 			}
-
 		} 
+	}
+
+	private void goToViewExerciseDetailsScene(GameObject button) {
+		ViewExerciseDetails.exerciseName = button.GetComponentInChildren<Text> ().text;
+		SceneManager.LoadScene("ViewExeciseDetails");
 	}
 		
 }

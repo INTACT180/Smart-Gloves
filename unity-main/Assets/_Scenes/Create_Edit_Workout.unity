@@ -594,6 +594,7 @@ MonoBehaviour:
   buttonPrefab: {fileID: 1734871166014566, guid: ec510d917d5e143d4bc472edb93e252e,
     type: 2}
   message: 
+  pageTitle: {fileID: 1392268466}
 --- !u!1 &811894656
 GameObject:
   m_ObjectHideFlags: 0
