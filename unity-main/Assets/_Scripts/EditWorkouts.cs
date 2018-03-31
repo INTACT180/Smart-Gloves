@@ -34,9 +34,14 @@ public class EditWorkouts : MonoBehaviour {
 				// Creates the button.
 				GameObject button = (GameObject)Instantiate (buttonPrefab);
 				button.GetComponentInChildren<Text> ().text = (string)workout.Key;
-//				button.GetComponent<Button>().onClick.AddListener(
-//					
-//				)
+
+				// Give the buttons an action to load a screen that displays its details. 
+				button.GetComponent<Button> ().onClick.AddListener (
+					() => {
+						
+						Debug.Log(button.GetComponentInChildren<Text> ().text + " button was pressed.");
+					}
+				);
 
 				button.transform.parent = menuPanel;
 			
