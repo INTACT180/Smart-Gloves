@@ -32,9 +32,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/_Scenes/Settings.unity
     guid: 8a1f6ab1034004043850b8f4e4671f3c
-  - enabled: 1
-    path: Assets/_Scenes/ViewExeciseDetails.unity
-    guid: e545db830a36a4200873d01324620b54
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
   - enabled: 1
     path: Assets/_Scenes/ViewExeciseDetails.unity
     guid: f10235718ceae4ae89fbde64fd48e998

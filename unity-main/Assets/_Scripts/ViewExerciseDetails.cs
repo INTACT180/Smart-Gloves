@@ -14,6 +14,8 @@ public class ViewExerciseDetails : MonoBehaviour {
 	public InputField startTimerField;
 	public InputField restTimerField;
 
+	public Text debugText;
+
 	// Use this for initialization
 	void Start () {
 		Debug.Log ("This is the exercise name: " + exerciseName);
@@ -24,15 +26,30 @@ public class ViewExerciseDetails : MonoBehaviour {
 		file.Close ();
 
 		List<string> exerciseDetails = (List<string>)workoutHistory.workoutTable [exerciseName];
-
-		workoutNameField.text = exerciseDetails[0];
-		numberOfSetsField.text = exerciseDetails [1];
-		startTimerField.text = exerciseDetails [2];
-		restTimerField.text = exerciseDetails [3];
-	}
 	
-	// Update is called once per frame
-	void Update () {
-		
+		workoutNameField.text = ((List<string>)workoutHistory.workoutTable[exerciseName])[0];
+		numberOfSetsField.text = ((List<string>)workoutHistory.workoutTable[exerciseName])[1];
+		startTimerField.text = ((List<string>)workoutHistory.workoutTable[exerciseName])[2];
+		restTimerField.text = ((List<string>)workoutHistory.workoutTable[exerciseName])[3];
+	}
+
+	public void save () {
+
+		// Loads the file with the corresponding workouts.
+		BinaryFormatter binaryFormatter = new BinaryFormatter();
+		FileStream file = File.Open (Application.persistentDataPath + "/workoutTable.dat", FileMode.Open);
+		WorkoutList workoutHistory = (WorkoutList) binaryFormatter.Deserialize(file);
+		file.Close ();
+
+		((List<string>)workoutHistory.workoutTable [exerciseName]) [0] = workoutNameField.text;
+		((List<string>)workoutHistory.workoutTable [exerciseName]) [1] = numberOfSetsField.text;
+		((List<string>)workoutHistory.workoutTable [exerciseName]) [2] = startTimerField.text;
+		((List<string>)workoutHistory.workoutTable [exerciseName]) [3] = restTimerField.text;
+
+		file = File.Create (Application.persistentDataPath + "/workoutTable.dat");
+		binaryFormatter.Serialize (file, workoutHistory);
+		file.Close ();
+
+		debugText.text = "Inserted into the workout table file.";
 	}
 }

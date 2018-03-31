@@ -16,7 +16,6 @@ public class AppSettings : MonoBehaviour {
 	public InputField startTimerField;
 	public InputField restTimerField;
 
-
 	public Text debugText;
 
 	// Use this for initialization
