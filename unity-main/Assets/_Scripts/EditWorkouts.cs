@@ -15,7 +15,8 @@ public class EditWorkouts : MonoBehaviour {
 
 	public Hashtable listOfWorkouts;
 	public string message;
-	public Text pageTitle;
+//	public Text pageTitle;
+	public Button pageTitle;
 
 	// Use this for initialization
 	void Start () {
@@ -40,10 +41,10 @@ public class EditWorkouts : MonoBehaviour {
 				// Give the buttons an action to load a screen that displays its details. 
 				button.GetComponent<Button> ().onClick.AddListener (
 					() => {
-						if (pageTitle.text.Equals ("Create/Edit Workout")) {
+						if (pageTitle.GetComponentInChildren<Text>().text.Equals ("Create/Edit Workout")) {
 							goToViewExerciseDetailsScene (button);
-						} else if (pageTitle.text.Equals ("Select Exercise")) {
-							Debug.Log ("Going to the selected workout: " + button.GetComponentInChildren<Text> ().text);
+						} else if (pageTitle.GetComponentInChildren<Text>().text.Equals ("Select Exercise")) {
+							goToExerciseScreenScene(button);
 						}
 					}
 				);
@@ -55,6 +56,11 @@ public class EditWorkouts : MonoBehaviour {
 	private void goToViewExerciseDetailsScene(GameObject button) {
 		ViewExerciseDetails.exerciseName = button.GetComponentInChildren<Text> ().text;
 		SceneManager.LoadScene("ViewExeciseDetails");
+	}
+
+	private void goToExerciseScreenScene(GameObject button) {
+		ExerciseScreen.exerciseName = button.GetComponentInChildren<Text> ().text;
+		SceneManager.LoadScene("ExerciseScreen");
 	}
 		
 }

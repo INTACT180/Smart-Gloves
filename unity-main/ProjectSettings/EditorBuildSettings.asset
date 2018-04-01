@@ -23,3 +23,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/_Scenes/SelectExercise.unity
     guid: 57028e24fe65547d788af4e721ab59d5
+  - enabled: 1
+    path: Assets/_Scenes/ExerciseScreen.unity
+    guid: b19bf788d421f495e8799dd0209389de
