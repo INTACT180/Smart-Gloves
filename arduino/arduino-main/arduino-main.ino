@@ -23,8 +23,9 @@ BNOAbstraction bno;
 //sensors_event_t event;
 xyz orEvent;
 xyz posEvent;
+xyz accEvent;
 uint8_t *ort[3];
-uint8_t *pos[3];
+uint8_t *acc[3];
 
 // Software Timer for blinking RED LED
 SoftwareTimer blinkTimer;
@@ -117,19 +118,26 @@ void loop()
 
   bno.getOrientation(&orEvent);
   bno.getCurrentPosition(&posEvent);
-  
-  ort[0] = (uint8_t*) (&orEvent.x);
-  ort[1] = (uint8_t*) (&orEvent.y);
-  ort[2] = (uint8_t*) (&orEvent.z);
+  bno.getAcceleration(&accEvent);
   
 
-  pos[0] = (uint8_t*) (&posEvent.x);
-  pos[1] = (uint8_t*) (&posEvent.y);
-  pos[2] = (uint8_t*) (&posEvent.z);
+  uint16_t orientCast[3];
+
+  orientCast[0] = (uint16_t)(orEvent.x * 100.0f);
+  orientCast[1] = (uint16_t)(orEvent.y * 100.0f);
+  orientCast[2] = (uint16_t)(orEvent.z * 100.0f);
+  
+  ort[0] = (uint8_t*) (&orientCast[0]);
+  ort[1] = (uint8_t*) (&orientCast[1]);
+  ort[2] = (uint8_t*) (&orientCast[2]);
+
+  acc[0] = (uint8_t*) (&accEvent.x);
+  acc[1] = (uint8_t*) (&accEvent.y);
+  acc[2] = (uint8_t*) (&accEvent.z);
   
   for(int i=0; i< 3; i++)
   {
-    for(int j=0; j<4;j++)
+    for(int j=0; j<2;j++)
     {
       buf[count++] = ort[i][j];
     }
@@ -137,13 +145,13 @@ void loop()
 
 //  buf[0] = 'P';
 //
-//  for(int i=0; i< 3; i++)
-//  {
-//    for(int j=0; j<4;j++)
-//    {
-//      buf[count++] = pos[i][j];
-//    }
-//  }
+  for(int i=0; i< 3; i++)
+  {
+    for(int j=0; j<4;j++)
+    {
+      buf[count++] = acc[i][j];
+    }
+  }
 
 //  Serial.print(buf[count-1]);
 //

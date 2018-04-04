@@ -6,13 +6,24 @@
 #include <Adafruit_BNO055.h>
 #include <Adafruit_Sensor.h>
 #include <utility/imumaths.h>
-
+#include <Arduino.h>
 
 #define PERIOD 1.5f/100
+
+enum exercise
+{
+  BICEP_CURL = 1,
+  BENCH_PRESS = 2
+};
 
 struct xyz
 {
   float x,y,z;
+};
+
+struct hpr
+{
+  float h,p,r;
 };
 
 struct xyz_int
@@ -75,7 +86,6 @@ class  FilterBuHp2
     }
 };
 
-
 class BNOAbstraction
 {
   private:
@@ -90,6 +100,10 @@ class BNOAbstraction
   sensors_event_t eventTemp;
 
   xyz currentPosition;
+  hpr currentOrientation;
+
+  xyz accelerationData;
+  
 
   xyz preAccelerationData;
   xyz postAccelerationData;
@@ -100,18 +114,26 @@ class BNOAbstraction
   xyz_int counter;
 
   xyz orientationData;
+  xyz accelerationTransferData;
+  
   imu::Vector<3> dataSample;
+  
   MovingAvg filterAcc_X =MovingAvg();
   MovingAvg filterAcc_Y =MovingAvg();
-  MovingAvg filterAcc_Z =MovingAvg();;
+  MovingAvg filterAcc_Z =MovingAvg();
 
   FilterBuHp2 filterVel_X =FilterBuHp2();
   FilterBuHp2 filterVel_Y =FilterBuHp2();
   FilterBuHp2 filterVel_Z =FilterBuHp2();
-  
 
   int iteration = 0;
+  
+  int repCount = -1;
+  int rawRep = -1;
+  bool movementDirection = 0; // 0 = down, 1 = up
+  
   uint32_t ts0;
+  uint32_t totalRunTime = 0;
   float period = 1.0f/100;
 
   bool calibrationRestored = false;
@@ -138,9 +160,19 @@ class BNOAbstraction
 
   void getOrientation(xyz *orientation);
 
+  void getCurrentOrientation(hpr *orient);
+
+  void getAcceleration(xyz *acc);
+
   void matLabDataOutput();
 
+  void setupBuzzer();
 
+  void loopBuzzer();
+
+  void bicepCurl(hpr orientation, xyz acceleration, uint32_t runTime);
+
+  void benchPress(hpr orientation, xyz acceleration, uint32_t runTime);
   
 };
 

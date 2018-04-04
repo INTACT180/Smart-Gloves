@@ -10,6 +10,8 @@ public class Responder_Test : MonoBehaviour {
 
 	public Transform Cube;
 
+	public Text[] xyz;
+
 
 
 
@@ -59,11 +61,26 @@ public class Responder_Test : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
+		Vector3 temp;
+
 		if (currentHand == Hand.Left) {
 			Cube.transform.eulerAngles = controller.OrientationLeft;
+			temp = controller.AccelerationLeft;
 		} else {
 			Cube.transform.eulerAngles = controller.OrientationRight;
+			temp = controller.AccelerationRight;
 		}
+
+		xyz [0].text = "Or X: " + Cube.transform.eulerAngles.x.ToString ();
+		xyz [1].text = "Or Y: " + Cube.transform.eulerAngles.y.ToString ();
+		xyz [2].text = "Or Z: " + Cube.transform.eulerAngles.z.ToString ();
+
+		xyz [3].text = " Ac X: " + temp.x.ToString();
+		xyz [4].text = " Ac Y: " + temp.y.ToString();
+		xyz [5].text = " Ac Z: " + temp.z.ToString();
+
+
+
 
 	}
 }

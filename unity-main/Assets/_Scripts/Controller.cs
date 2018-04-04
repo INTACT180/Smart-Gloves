@@ -23,6 +23,9 @@ public class Controller : MonoBehaviour
 	public Vector3 OrientationLeft   = new Vector3();
 	public Vector3 OrientationRight  = new Vector3();
 
+	public Vector3 AccelerationLeft  = new Vector3 ();
+	public Vector3 AccelerationRight = new Vector3 ();
+
 	public bool ConnectedLeft	= false;
 	public bool ConnectedRight   = false;
 
@@ -248,6 +251,8 @@ public class Controller : MonoBehaviour
 
 					print ("Connect Primary running for Left! " + LeftName);
 
+					print ("Scott12: Connected LEFT: " + ConnectedLeft + " Connected Right " + ConnectedRight + " Device Address Left: " + _deviceAddressLeft + " Device Address Right: " + _deviceAddressRight);
+
 					if (ConnectedLeft == null)
 						ConnectedLeft = false;
 					if (ConnectedLeft || string.IsNullOrEmpty (_deviceAddressLeft)) {
@@ -281,8 +286,16 @@ public class Controller : MonoBehaviour
 						// be aware that this will also get called when the disconnect
 						// is called above. both methods get call for the same action
 						// this is for backwards compatibility
-						ConnectedLeft = false;
-						subscribedLeft =false;
+							if(address.Equals(_deviceAddressLeft)){
+								ConnectedLeft = false;
+								subscribedLeft =false;
+								_deviceAddressLeft = "";
+							}else if( address.Equals(_deviceAddressRight))
+							{
+								ConnectedRight = false;
+								subscribedRight = false;
+								_deviceAddressRight = "";
+							}
 					});
 
 					break;
@@ -319,11 +332,21 @@ public class Controller : MonoBehaviour
 							}
 						}, (address) => {
 
-						// this will get called when the device disconnects
-						// be aware that this will also get called when the disconnect
-						// is called above. both methods get call for the same action
-						// this is for backwards compatibility
-						ConnectedLeft = false;
+							// this will get called when the device disconnects
+							// be aware that this will also get called when the disconnect
+							// is called above. both methods get call for the same action
+							// this is for backwards compatibility
+							if(address.Equals(_deviceAddressLeft)){
+								ConnectedLeft = false;
+								subscribedLeft =false;
+								_deviceAddressLeft = "";
+							}else if( address.Equals(_deviceAddressRight))
+							{
+								ConnectedRight = false;
+								subscribedRight = false;
+								_deviceAddressRight = "";
+							}
+
 					});
 
 					break;
@@ -334,7 +357,7 @@ public class Controller : MonoBehaviour
 
 					print ("Connect Secondary running for " + RightName);
 
-					if (ConnectedRight) {
+					if (ConnectedRight|| string.IsNullOrEmpty (_deviceAddressRight)) {
 						//TODO: hook this up to normal mode
 						return;
 					}
@@ -358,6 +381,7 @@ public class Controller : MonoBehaviour
 //								print ("Red frame update");
 //								ReactToInput (bytes, address3);
 //							});
+							print("connected right");
 							ConnectedRight = true;
 
 							//TODO: hook this up to normal mode
@@ -368,8 +392,17 @@ public class Controller : MonoBehaviour
 						// be aware that this will also get called when the disconnect
 						// is called above. both methods get call for the same action
 						// this is for backwards compatibility
-						ConnectedRight = false;
-						subscribedRight = false;
+
+						if(address.Equals(_deviceAddressLeft)){
+							ConnectedLeft = false;
+							subscribedLeft =false;
+							_deviceAddressLeft = "";
+						}else if( address.Equals(_deviceAddressRight))
+						{
+							ConnectedRight = false;
+							subscribedRight = false;
+							_deviceAddressRight = "";
+						}
 					});
 					break;
 
@@ -462,13 +495,32 @@ public class Controller : MonoBehaviour
 		return (uuid1.ToUpper().CompareTo(uuid2.ToUpper()) == 0);
 	}
 
-	void SendString (string s)
+	void SendStringLeft (string s)
 	{
 		//TODO: need to specify who we are sending what t
 		byte[] data = Encoding.ASCII.GetBytes(s);
 		print("Sending String");
 		BluetoothLEHardwareInterface.WriteCharacteristic (_deviceAddressLeft, ServiceUUID, WriteCharacteristic, data, data.Length, true, (characteristicUUID) => {
 			BluetoothLEHardwareInterface.Log ("Write Succeeded");
+		});
+	}
+	void SendStringRight (string s)
+	{
+		//TODO: need to specify who we are sending what t
+		byte[] data = Encoding.ASCII.GetBytes(s);
+		print("Sending String");
+		BluetoothLEHardwareInterface.WriteCharacteristic (_deviceAddressLeft, ServiceUUID, WriteCharacteristic, data, data.Length, true, (characteristicUUID) => {
+			BluetoothLEHardwareInterface.Log ("Write Succeeded");
+		});
+	}
+
+	void SendStringBoth (string s)
+	{
+		//TODO: need to specify who we are sending what t
+		byte[] data = Encoding.ASCII.GetBytes(s);
+		print("Sending String");
+		BluetoothLEHardwareInterface.WriteCharacteristic (_deviceAddressLeft, ServiceUUID, WriteCharacteristic, data, data.Length, true, (characteristicUUID) => {
+			SendStringRight(s);
 		});
 	}
 
@@ -487,18 +539,29 @@ public class Controller : MonoBehaviour
 	{
 		if(bytes[0] == 'O')
 		{
-			float x = BitConverter.ToSingle (bytes, 1);
-			float y = BitConverter.ToSingle (bytes, 5);
-			float z = BitConverter.ToSingle (bytes, 9);
-			print (x + "\n" + y + "\n" + z);
+			UInt16 tempX = BitConverter.ToUInt16 (bytes, 1);
+			UInt16 tempY = BitConverter.ToUInt16 (bytes, 3);
+			UInt16 tempZ = BitConverter.ToUInt16 (bytes, 5);
+
+			float accX   = BitConverter.ToSingle (bytes, 7);
+			float accY   = BitConverter.ToSingle (bytes, 11);
+			float accZ   = BitConverter.ToSingle (bytes, 15);
+
+			float x = ((float)tempX) / 100.0f;
+			float y = ((float)tempY) / 100.0f;
+			float z = ((float)tempZ) / 100.0f;
+			//print (x + "\n" + y + "\n" + z);
 
 			Vector3 target = new Vector3(z,y,x);
+			Vector3 targetAcc = new Vector3 (accX, accY, accZ);
 
-			if (address.Equals (_deviceAddressLeft))
+			if (address.Equals (_deviceAddressLeft)) {
 				OrientationLeft = target;
-			else if (address.Equals (_deviceAddressRight))
+				AccelerationLeft = targetAcc;
+			} else if (address.Equals (_deviceAddressRight)) {
 				OrientationRight = target;
-			else
+				AccelerationRight = targetAcc;
+			}else
 				print (address + " XXXXX " + _deviceAddressLeft);
 
 		}
