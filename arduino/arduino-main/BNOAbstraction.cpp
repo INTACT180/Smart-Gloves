@@ -1,5 +1,172 @@
 #include "BNOAbstraction.h"
 
+void BNOAbstraction::bicepCurl(hpr orientation, xyz acceleration, uint32_t runTime)
+{
+  bool makeNoise = true;
+
+  if(runTime >= 5000)
+  {
+    // X Axis Deadzone
+    if((acceleration.x <= 1.0) && (acceleration.x >= -1.0))
+      acceleration.x = 0;
+
+    // Y Axis Deadzone
+    if((acceleration.y <= 1.0) && (acceleration.y >= -1.0))
+      acceleration.y = 0;
+
+    // Z Axis Deadzone
+    if((acceleration.z <= 1.0) && (acceleration.z >= -0.5))
+      acceleration.z = 0;
+      
+    Serial.print("runTime: ");
+    Serial.print(runTime);
+    Serial.print("\t");
+
+//    Serial.print("X: ");
+//    Serial.print(acceleration.x, 4);
+//    Serial.print("\t\t");
+//
+//    Serial.print("Y: ");
+//    Serial.print(acceleration.y, 4);
+//    Serial.print("\t\t");
+
+     Serial.print("Z: ");
+    Serial.print(acceleration.z, 4);
+    Serial.print("\t\t");
+    
+//    Serial.print("H: ");
+//    Serial.print(orientation.h, 4);
+//    Serial.print("\t\t");
+//  
+//    Serial.print("P: ");
+//    Serial.print(orientation.p, 4);
+//    Serial.print("\t\t");
+//  
+//    Serial.print("R: ");
+//    Serial.print(orientation.r, 4);
+//    Serial.print("\t\t");
+
+    if((acceleration.z > 3) && (movementDirection == 1))
+    {
+      movementDirection = 0;
+    }
+
+    else if((acceleration.z <= -0.5) && (movementDirection == 0))
+    {
+      repCount++;
+      movementDirection = 1;
+    }
+
+    Serial.print("movementDirection: ");
+    Serial.print(movementDirection);
+    Serial.print("\t");
+
+    float test = 355.123456789;
+
+    Serial.print("test: ");
+    Serial.print(test);
+    Serial.print("\t");
+
+    uint16_t test2 = (uint16_t) test;
+
+    Serial.print("test2: ");
+    Serial.print(test2);
+    Serial.print("\t");
+    
+    Serial.print("RepCount: ");
+    Serial.print(repCount);
+    Serial.println("");
+    
+    if(orientation.r >= -90 && orientation.r <= 90)
+    {
+      makeNoise = false;
+    }
+
+    if(orientation.p >= -10 && orientation.p <= 10)
+    {
+      makeNoise = false;
+    }
+  
+    if(!makeNoise)
+    {
+//      loopBuzzer();
+      makeNoise = true;
+    }
+  }
+
+  else
+  {
+    Serial.print("runTime: ");
+    Serial.print(runTime);
+    Serial.print("\t");
+    
+    Serial.println("Get In Position");
+  }
+}
+
+void BNOAbstraction::benchPress(hpr orientation, xyz acceleration, uint32_t runTime)
+{
+  Serial.print("H: ");
+  Serial.print(orientation.h, 4);
+  Serial.print("\t\t");
+
+  Serial.print("P: ");
+  Serial.print(orientation.p, 4);
+  Serial.print("\t\t");
+
+  Serial.print("R: ");
+  Serial.print(orientation.r, 4);
+  Serial.println("");
+
+  bool makeNoise = true;
+
+  if(orientation.r >= 90 && orientation.r <= 100)
+  {
+//    Serial.print("Buzz Condition 1");
+    makeNoise = false;
+  }
+
+
+  if(makeNoise)
+  {
+    loopBuzzer();
+    makeNoise = true;
+  }
+  
+}
+
+
+void BNOAbstraction::setupBuzzer()
+{
+  Serial.begin(115200);
+
+  // Enable all 3 PWM modules with 15-bit resolutions(max) but different clock div
+  HwPWM0.addPin(A2);
+  HwPWM0.begin();
+  HwPWM0.setResolution(15);
+
+  //DIV1 = B4
+  //DIV2 = B3
+  //DIV4 = Bb7
+  //DIV8 = B7
+  //DIV16 = B7
+  
+  HwPWM0.setClockDiv(PWM_PRESCALER_PRESCALER_DIV_1); // default : freq = 16Mhz
+}
+
+void BNOAbstraction::loopBuzzer()
+{
+  const int maxValue = bit(15) - 1;
+  bool inverted;
+ 
+
+    HwPWM0.writePin( A2, 4000, false);
+    // wait for 30 milliseconds to see the dimming effect
+//    delay(100);
+
+//    HwPWM0.stop();
+}
+
 void BNOAbstraction::displaySensorOffsets(const adafruit_bno055_offsets_t &calibData)
 {
   Serial.print("Accelerometer: ");
@@ -97,6 +264,10 @@ void BNOAbstraction::getCurrentPosition(xyz *pos)
   *pos = currentPosition;
 }
 
+void BNOAbstraction::getCurrentOrientation(hpr *orient)
+{
+  *orient = currentOrientation;
+}
 
 void BNOAbstraction::matLabDataOutput()
 {
@@ -198,7 +369,18 @@ xyz* BNOAbstraction::calculatePosition()
     if((postAccelerationData.z <= 0.14) && (postAccelerationData.z >= -0.14))
       postAccelerationData.z = 0;
 
-    
+    Serial.print("Acceleration X: ");
+    Serial.print(postAccelerationData.x,4);
+    Serial.print("\t\t\t");
+
+    Serial.print("Acceleration Y: ");
+    Serial.print(postAccelerationData.y,4);
+    Serial.print("\t\t\t");
+
+    Serial.print("Acceleration Z: ");
+    Serial.print(postAccelerationData.z,4);
+    Serial.print("\t\t\t\t");
+
     // X Axis First Integration
     postVelocityData.x = preVelocityData.x + ((postAccelerationData.x + preAccelerationData.x)/2.0f*period);
 
@@ -225,43 +407,19 @@ xyz* BNOAbstraction::calculatePosition()
 
     // Z Axis Second Integration
     postPositionData.z = prePositionData.z + ((postVelocityData.z + preVelocityData.z)/2.0f*period);
-//
-//    Serial.print("Acceleration X: ");
-//    Serial.print(postAccelerationData.x,4);
-//    Serial.print("\t\t");
-//
-//    Serial.print("Acceleration Y: ");
-//    Serial.print(postAccelerationData.y,4);
-//    Serial.print("\t\t");
-//
-//    Serial.print("Acceleration Z: ");
-//    Serial.print(postAccelerationData.z,4);
-//    Serial.print("\t\t");
-//
-//        Serial.print("Velocity X: ");
-//    Serial.print(postVelocityData.x,4);
-//    Serial.print("\t\t");
-//
-//    Serial.print("Velocity Y: ");
-//    Serial.print(postVelocityData.y,4);
-//    Serial.print("\t\t");
-//
-//    Serial.print("Velocity Z: ");
-//    Serial.print(postVelocityData.z,4);
-//    Serial.print("\t\t");
-//
-//    Serial.print("Position X: ");
-//    Serial.print(postPositionData.x,4);
-//    Serial.print("\t\t");
-//
-//    Serial.print("Position Y: ");
-//    Serial.print(postPositionData.y,4);
-//    Serial.print("\t\t");
-//
-//    Serial.print("Position Z: ");
-//    Serial.print(postPositionData.z,4);
-//    Serial.println("\t\t");
-////    
+
+    Serial.print("Position X: ");
+    Serial.print(postPositionData.x,4);
+    Serial.print("\t\t\t");
+
+    Serial.print("Position Y: ");
+    Serial.print(postPositionData.y,4);
+    Serial.print("\t\t\t");
+
+    Serial.print("Position Z: ");
+    Serial.print(postPositionData.z,4);
+    Serial.print("\t\t\t");
+    
     preAccelerationData = postAccelerationData;
     preVelocityData = postVelocityData;
 
@@ -272,7 +430,7 @@ xyz* BNOAbstraction::calculatePosition()
     else
       counter.x = 0;
 
-    if(counter.x >= 25)
+    if(counter.x >= 3)
     {
       postVelocityData.x = 0;
       preVelocityData.x = 0;
@@ -285,7 +443,7 @@ xyz* BNOAbstraction::calculatePosition()
     else
       counter.y = 0;
 
-    if(counter.y >= 25)
+    if(counter.y >= 3)
     {
       postVelocityData.y = 0;
       preVelocityData.y = 0;
@@ -298,7 +456,7 @@ xyz* BNOAbstraction::calculatePosition()
     else
       counter.z = 0;
 
-    if(counter.z >= 25)
+    if(counter.z >= 3)
     {
       postVelocityData.z = 0;
       preVelocityData.z = 0;
@@ -321,60 +479,70 @@ xyz* BNOAbstraction::calculatePosition()
 
 void BNOAbstraction::update()
 {
-    
     if(iteration++ >=100)
     {
       iteration=0;
       uint32_t ts1 = millis();
 
       period = ((float) (ts1 - ts0))/1000.0f/100.0f;
-      
-      Serial.print(ts1-ts0);
-      Serial.print(" ");
 
+      totalRunTime += (ts1-ts0);
       ts0=ts1;
-      Serial.print(period,7);
-      Serial.print( " period \n");
     }
 //    Serial.print (iteration);
-//    Serial.print ("\t ");
-
+//    Serial.print ("\t");
 
   xyz temp;
-  imu::Quaternion q = bno.getQuat();
-  q.normalize();
-  float tempr = q.x();  q.x() = -q.y();  q.y() = tempr;
-  q.z() = -q.z();
-  imu::Vector<3> euler = q.toEuler();
-  Serial.print(F("Orientation: "));
-  Serial.print(-180/M_PI * euler.x());  // heading, nose-right is positive, z-axis points up
-  Serial.print(F(" "));
-  Serial.print(-180/M_PI * euler.y());  // roll, rightwing-up is positive, y-axis points forward
-  Serial.print(F(" "));
-  Serial.print(-180/M_PI * euler.z());  // pitch, nose-down is positive, x-axis points right
-  Serial.println(F(""));
+  imu::Vector<3> euler = bno.getVector(Adafruit_BNO055::VECTOR_GYROSCOPE);
 
-  temp.x = -180/M_PI * euler.x() +180.0f;
+  temp.x = euler.x();// +180.0f;
 
-  temp.y = -180/M_PI * euler.y() +180.0f; 
+  temp.y = euler.y() +180.0f; 
 
-  temp.z = -180/M_PI * euler.z() +180.0f;
-  
+  temp.z =euler.z() +180.0f;
+
+   Serial.print(F("Orientation: "));
+  Serial.print( euler.x());  // heading, nose-right is positive, z-axis points up
+  Serial.print(F("\t\t\t"));
+  Serial.print(euler.y());  // roll, rightwing-up is positive, y-axis points forward
+  Serial.print(F("\t\t\t"));
+  Serial.print(euler.z());  // pitch, nose-down is positive, x-axis points right
+  Serial.println(F("\t\t\t"));
 
   orientationData = temp;
   
-  //bno.getEvent(&eventTemp);
-  //event = eventTemp;
+  dataSample = bno.getVector(Adafruit_BNO055::VECTOR_LINEARACCEL);
+  accelerationData.x = dataSample.x();
+  accelerationData.y = dataSample.y();
+  accelerationData.z = dataSample.z();
+
+  currentOrientation.h = event.orientation.x;
+  currentOrientation.p = event.orientation.y;
+  currentOrientation.r = event.orientation.z;
   
-  xyz *tempXYZ = calculatePosition();
-  currentPosition = *tempXYZ;
+//  int exercise = 1;
+//  switch(exercise)
+//  {
+//    case BICEP_CURL:
+//      bicepCurl(currentOrientation, accelerationData, totalRunTime);
+//      break;
+//
+//    case BENCH_PRESS:
+//      benchPress(currentOrientation, accelerationData, totalRunTime);
+//      break;
+//
+//    default:
+//    break;
+//  }
+
+//  Serial.println("");
 
 }
 
 bool BNOAbstraction::begin()
 {
   /* Initialize the sensor */
-  if (!bno.begin())
+  if (!bno.begin())//Adafruit_BNO055::OPERATION_MODE_ACCGYRO))
   {
       /* There was a problem detecting the BNO055 ... check your connections */
       Serial.print("Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!");
@@ -462,16 +630,25 @@ bool BNOAbstraction::begin()
     
   }
 
-  bno.setMode(Adafruit_BNO055::OPERATION_MODE_ACCGYRO);
+  //bno.setMode(Adafruit_BNO055::OPERATION_MODE_ACCGYRO);
 
+  setupBuzzer();
 }
 
 void BNOAbstraction::getOrientation(xyz *OR)
-  {
-   *OR= orientationData;
-  }
+{
+ *OR= orientationData;
+}
 
 void BNOAbstraction::getEvent(sensors_event_t *evt)
-  {
-   *evt = event;
-  }
+{
+ *evt = event;
+}
+
+void BNOAbstraction::getAcceleration(xyz *acc)
+{
+  acc->x = accelerationData.x;
+  acc->y = accelerationData.y;
+  acc->z = accelerationData.z;
+}
+
