@@ -53,9 +53,6 @@ public class Responder_Exercise : MonoBehaviour {
 
 		currentState = States.Pre;
 
-	
-
-
 	}
 
 	public void Back_Button()
