@@ -59,7 +59,7 @@ public class EditWorkouts : MonoBehaviour {
 	}
 
 	private void goToExerciseScreenScene(GameObject button) {
-		ExerciseScreen.exerciseName = button.GetComponentInChildren<Text> ().text;
+		Responder_Exercise.exerciseName = button.GetComponentInChildren<Text> ().text;
 		SceneManager.LoadScene("ExerciseScreen");
 	}
 		
