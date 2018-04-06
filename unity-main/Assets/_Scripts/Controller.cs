@@ -457,7 +457,7 @@ public class Controller : MonoBehaviour
 					BluetoothLEHardwareInterface.ReadCharacteristic (_deviceAddressRight, ServiceUUID, ReadCharacteristic, ( characteristicUUID, bytes) => {
 						ReactToInput ( bytes, _deviceAddressRight);
 						if(reading)
-							SetState (States.ReadLeft, 0.01f);
+							SetState (States.ReadRight, 0.01f);
 					});
 					//SetState (States.ReadRight, 0.01f);
 					break;
@@ -529,7 +529,7 @@ public class Controller : MonoBehaviour
 		//TODO: need to specify who we are sending what t
 		byte[] data = Encoding.ASCII.GetBytes(s);
 		print("Sending String");
-		BluetoothLEHardwareInterface.WriteCharacteristic (_deviceAddressLeft, ServiceUUID, WriteCharacteristic, data, data.Length, true, (characteristicUUID) => {
+		BluetoothLEHardwareInterface.WriteCharacteristic (_deviceAddressRight, ServiceUUID, WriteCharacteristic, data, data.Length, true, (characteristicUUID) => {
 			BluetoothLEHardwareInterface.Log ("Write Succeeded");
 		});
 	}
