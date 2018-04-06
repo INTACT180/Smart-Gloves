@@ -31,6 +31,8 @@ public class Controller : MonoBehaviour
 
 	public bool ModifyLeft;
 
+	bool reading = false;
+
 	enum States
 	{
 		None,
@@ -445,15 +447,19 @@ public class Controller : MonoBehaviour
 				case States.ReadLeft:
 					BluetoothLEHardwareInterface.ReadCharacteristic (_deviceAddressLeft, ServiceUUID, ReadCharacteristic, ( characteristicUUID, bytes) => {
 						ReactToInput( bytes,_deviceAddressLeft);
+						if(reading)
+							SetState (States.ReadLeft, 0.01f);
 					});
-					SetState (States.ReadLeft, 0.01f);
+					//SetState (States.ReadLeft, 0.01f);
 					break;
 				
 				case States.ReadRight:
 					BluetoothLEHardwareInterface.ReadCharacteristic (_deviceAddressRight, ServiceUUID, ReadCharacteristic, ( characteristicUUID, bytes) => {
 						ReactToInput ( bytes, _deviceAddressRight);
+						if(reading)
+							SetState (States.ReadLeft, 0.01f);
 					});
-					SetState (States.ReadRight, 0.01f);
+					//SetState (States.ReadRight, 0.01f);
 					break;
 
 				case States.ReadBoth:
@@ -461,9 +467,11 @@ public class Controller : MonoBehaviour
 						ReactToInput ( bytes, _deviceAddressRight);
 						BluetoothLEHardwareInterface.ReadCharacteristic (_deviceAddressLeft, ServiceUUID, ReadCharacteristic, ( charUID, bits) => {
 							ReactToInput( bits,_deviceAddressLeft);
+							if(reading)
+								SetState (States.ReadBoth, 0.01f);
 						});
 					});
-					SetState (States.ReadBoth, 0.01f);
+					//SetState (States.ReadBoth, 0.02f);
 					break;
 
 
@@ -507,7 +515,7 @@ public class Controller : MonoBehaviour
 		return (uuid1.ToUpper().CompareTo(uuid2.ToUpper()) == 0);
 	}
 
-	void SendStringLeft (string s)
+	public void SendStringLeft (string s)
 	{
 		//TODO: need to specify who we are sending what t
 		byte[] data = Encoding.ASCII.GetBytes(s);
@@ -516,7 +524,7 @@ public class Controller : MonoBehaviour
 			BluetoothLEHardwareInterface.Log ("Write Succeeded");
 		});
 	}
-	void SendStringRight (string s)
+	public void SendStringRight (string s)
 	{
 		//TODO: need to specify who we are sending what t
 		byte[] data = Encoding.ASCII.GetBytes(s);
@@ -526,7 +534,7 @@ public class Controller : MonoBehaviour
 		});
 	}
 
-	void SendStringBoth (string s)
+	public void SendStringBoth (string s)
 	{
 		//TODO: need to specify who we are sending what t
 		byte[] data = Encoding.ASCII.GetBytes(s);
@@ -621,27 +629,34 @@ public class Controller : MonoBehaviour
 
 	public void ReadLeft()
 	{
-		if(ConnectedLeft)
+		if (ConnectedLeft) {
+			reading = true;
 			SetState (States.ReadLeft, 0.1f);
+		}
 
 	}
 
 	public void ReadRight()
 	{
-		if(ConnectedRight)
+		if (ConnectedRight) {
+			reading = true;
 			SetState (States.ReadRight, 0.1f);
+		}
 
 	}
 
 	public void ReadBoth()
 	{
-		if (ConnectedLeft && ConnectedRight)
+		if (ConnectedLeft && ConnectedRight) {
+			reading = true;
 			SetState (States.ReadBoth, 0.1f);
+		}
 	}
 
 
 	public void ReadStop()
 	{
+		reading = false;
 		SetState (States.None, 0.1f);
 	}
 

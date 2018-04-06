@@ -57,6 +57,7 @@ void setup()
   //while(true){beep();}
   
   Scheduler.startLoop(bnoThread);
+  Scheduler.startLoop(beep);
   
   // Set max power. Accepted values are: -40, -30, -20, -16, -12, -8, -4, 0, 4
   Bluefruit.setTxPower(4);
@@ -174,7 +175,9 @@ void loop()
   {
     uint8_t ch;
     ch = (uint8_t) bleuart.read();
-    Serial.write(ch);
+    if( ch  == 'B')
+      beep_timer = 300;
+    //Serial.println(ch);
   }
 //  Serial.println("bluetooth");
   // Request CPU to enter low-power mode until an event/interrupt occurs
@@ -258,7 +261,7 @@ void beep()
     Serial.println(beep_timer);
   }
 
-  if(beep_timer<0)
+  if(beep_timer<=0)
   {
     if(beeper_status)
     {
@@ -267,7 +270,7 @@ void beep()
     }
   }
 
-  delay(100);
+  delay(50);
   
 }
 

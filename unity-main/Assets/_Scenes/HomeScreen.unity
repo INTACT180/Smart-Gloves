@@ -502,6 +502,60 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &482276918
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 482276920}
+  - component: {fileID: 482276919}
+  m_Layer: 0
+  m_Name: Controller
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &482276919
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 482276918}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cdf8774d30e39417d8a36fbc4b7d1081, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  LeftName: Bluefruit52
+  RightName: Redfruit52
+  blueCube: {fileID: 0}
+  redCube: {fileID: 0}
+  ServiceUUID: 6E400001-B5A3-F393-E0A9-E50E24DCCA9E
+  ReadCharacteristic: 6E400003-B5A3-F393-E0A9-E50E24DCCA9E
+  WriteCharacteristic: 6E400002-B5A3-F393-E0A9-E50E24DCCA9E
+  OrientationLeft: {x: 0, y: 0, z: 0}
+  OrientationRight: {x: 0, y: 0, z: 0}
+  AccelerationLeft: {x: 0, y: 0, z: 0}
+  AccelerationRight: {x: 0, y: 0, z: 0}
+  ConnectedLeft: 0
+  ConnectedRight: 0
+  ModifyLeft: 0
+--- !u!4 &482276920
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 482276918}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 384, y: 512, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &564430974
 GameObject:
   m_ObjectHideFlags: 0
