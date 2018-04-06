@@ -15,6 +15,7 @@ public class AppSettings : MonoBehaviour {
 	public InputField numberOfSetsField;
 	public InputField startTimerField;
 	public InputField restTimerField;
+	public InputField goalRepsField;
 
 	public Text debugText;
 
@@ -81,6 +82,7 @@ public class AppSettings : MonoBehaviour {
 		workoutDetailsList.Add (this.numberOfSetsField.text);
 		workoutDetailsList.Add (this.startTimerField.text);
 		workoutDetailsList.Add (this.restTimerField.text);
+		workoutDetailsList.Add (this.goalRepsField.text);
 
 		workoutHistory.workoutTable.Add (this.workoutNameField.text, workoutDetailsList);
 
@@ -121,6 +123,7 @@ class WorkoutList {
 	public string numberOfSets;
 	public string startTimer;
 	public string restTimer;
+	public string numberOfReps;
 
 	// Constructor Creates Hashtable that will have all workours and List that will store all workout details.
 	public WorkoutList () {

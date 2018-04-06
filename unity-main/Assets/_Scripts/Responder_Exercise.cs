@@ -23,6 +23,7 @@ public class Responder_Exercise : MonoBehaviour {
 	public InputField numberOfSetsField;
 	public InputField startTimerField;
 	public InputField restTimerField;
+	public InputField goalRepsField;
 
 	public Text gameTimerText;
 	public Text currentStageText;
@@ -100,6 +101,7 @@ public class Responder_Exercise : MonoBehaviour {
 		numberOfSetsField.text = ((List<string>)workoutHistory.workoutTable[exerciseName])[1];
 		startTimerField.text = ((List<string>)workoutHistory.workoutTable[exerciseName])[2];
 		restTimerField.text = ((List<string>)workoutHistory.workoutTable[exerciseName])[3];
+		goalRepsField.text = ((List<string>)workoutHistory.workoutTable[exerciseName])[4];
 
 		// Parses the start time entered by the user to a float and sets the start timer
 		startTimerVal = float.Parse (startTimerField.text);
