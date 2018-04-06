@@ -27,6 +27,11 @@ xyz accEvent;
 uint8_t *ort[3];
 uint8_t *acc[3];
 
+uint16_t pastCheck;
+int beep_timer = -1;
+
+bool beeper_status = false;
+
 // Software Timer for blinking RED LED
 SoftwareTimer blinkTimer;
 
@@ -47,7 +52,10 @@ void setup()
   Bluefruit.begin();
   bno.begin();
 
-  //while(true){bno.matLabDataOutput();}
+  HwPWM0.addPin(A2);
+
+  //while(true){beep();}
+  
   Scheduler.startLoop(bnoThread);
   
   // Set max power. Accepted values are: -40, -30, -20, -16, -12, -8, -4, 0, 4
@@ -230,6 +238,53 @@ void blink_timer_callback(TimerHandle_t xTimerID)
 void rtos_idle_callback(void)
 {
   
+}
+
+void beep()
+{
+  uint16_t currentCheck = millis();
+  uint16_t timeDelta = currentCheck - pastCheck;
+  pastCheck = currentCheck;
+  
+  if(beep_timer > 0)
+  {
+    if(!beeper_status)
+    {
+      startBuzzer();
+      beeper_status = true;
+    }
+    else
+      beep_timer -= timeDelta;
+    Serial.println(beep_timer);
+  }
+
+  if(beep_timer<0)
+  {
+    if(beeper_status)
+    {
+      stopBuzzer();
+      beeper_status = false;
+    }
+  }
+
+  delay(100);
+  
+}
+
+void startBuzzer()
+{
+  Serial.println("Starting Buzzer");
+  HwPWM0.begin();
+  HwPWM0.setResolution(15);
+  HwPWM0.setClockDiv(PWM_PRESCALER_PRESCALER_DIV_1); // default : freq = 16Mhz
+  HwPWM0.writePin( A2, 4000, false);
+  
+}
+
+void stopBuzzer()
+{
+  Serial.println("Stopping Buzzer");
+  HwPWM0.stop();
 }
 
 

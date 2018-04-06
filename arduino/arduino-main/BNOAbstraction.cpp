@@ -322,6 +322,59 @@ void BNOAbstraction::matLabDataOutput()
 }
 
 
+void BNOAbstraction::calculateOrientation()
+{
+    imu::Vector<3> deltaAcceleration = bno.getVector(Adafruit_BNO055::VECTOR_GYROSCOPE);
+    postDeltaOrientationData.x = deltaAcceleration.x();
+    postDeltaOrientationData.y = deltaAcceleration.y();
+    postDeltaOrientationData.z = deltaAcceleration.z();
+
+    // X Axis Deadzone
+    if((postDeltaOrientationData.x <= 0.01) && (postDeltaOrientationData.x >= -0.01))
+      postAccelerationData.x = 0;
+
+    // Y Axis Deadzone
+    if((postDeltaOrientationData.y <= 0.01)&& (postDeltaOrientationData.y >= -0.01))
+      postAccelerationData.y = 0;
+
+    // Z Axis Deadzone
+    if((postDeltaOrientationData.z <= 0.01) && (postDeltaOrientationData.z >= -0.01))
+      postAccelerationData.z = 0;
+
+    // X Axis First Integration
+    postOrientationData.x = preOrientationData.x + ((postDeltaOrientationData.x + preDeltaOrientationData.x)/2.0f*period);
+
+    // Y Axis First Integration
+    postOrientationData.y = preOrientationData.y + ((postDeltaOrientationData.y + preDeltaOrientationData.y)/2.0f*period);
+
+    // Z Axis First Integration
+    postOrientationData.z = preOrientationData.z + ((postDeltaOrientationData.z + preDeltaOrientationData.z)/2.0f*period);
+
+    if(postOrientationData.x <0)
+      postOrientationData.x += 360.0f;
+    else if(postOrientationData.x>=360.0f)
+      postOrientationData.x -= 360.0f;
+
+    if(postOrientationData.y <0)
+      postOrientationData.y += 360.0f;
+    else if(postOrientationData.y >= 360.0f)
+      postOrientationData.y -= 360.0f;
+
+    if(postOrientationData.z <0)
+      postOrientationData.z += 360.0f;
+    else if(postOrientationData.z>=360.0f)
+      postOrientationData.z -= 360.0f;
+
+    preDeltaOrientationData = postDeltaOrientationData;
+    preOrientationData = postOrientationData;
+
+   
+
+    orientationData = postOrientationData;
+
+}
+
+
 xyz* BNOAbstraction::calculatePosition()
 {
 //
@@ -492,24 +545,26 @@ void BNOAbstraction::update()
 //    Serial.print (iteration);
 //    Serial.print ("\t");
 
-  xyz temp;
-  imu::Vector<3> euler = bno.getVector(Adafruit_BNO055::VECTOR_GYROSCOPE);
+//  xyz temp;
+//  imu::Vector<3> euler = bno.getVector(Adafruit_BNO055::VECTOR_GYROSCOPE);
+//
+//  temp.x = euler.x();// +180.0f;
+//
+//  temp.y = euler.y() +180.0f; 
+//
+//  temp.z =euler.z() +180.0f;
+//
+//   Serial.print(F("Orientation: "));
+//  Serial.print( euler.x());  // heading, nose-right is positive, z-axis points up
+//  Serial.print(F("\t\t\t"));
+//  Serial.print(euler.y());  // roll, rightwing-up is positive, y-axis points forward
+//  Serial.print(F("\t\t\t"));
+//  Serial.print(euler.z());  // pitch, nose-down is positive, x-axis points right
+//  Serial.println(F("\t\t\t"));
+//
+//  orientationData = temp;
 
-  temp.x = euler.x();// +180.0f;
-
-  temp.y = euler.y() +180.0f; 
-
-  temp.z =euler.z() +180.0f;
-
-   Serial.print(F("Orientation: "));
-  Serial.print( euler.x());  // heading, nose-right is positive, z-axis points up
-  Serial.print(F("\t\t\t"));
-  Serial.print(euler.y());  // roll, rightwing-up is positive, y-axis points forward
-  Serial.print(F("\t\t\t"));
-  Serial.print(euler.z());  // pitch, nose-down is positive, x-axis points right
-  Serial.println(F("\t\t\t"));
-
-  orientationData = temp;
+  calculateOrientation();
   
   dataSample = bno.getVector(Adafruit_BNO055::VECTOR_LINEARACCEL);
   accelerationData.x = dataSample.x();
@@ -623,6 +678,24 @@ bool BNOAbstraction::begin()
     postPositionData.x = 0;
     postPositionData.y = 0;
     postPositionData.z = 0;
+
+    preOrientationData.x =0;
+    preOrientationData.y =0;
+    preOrientationData.z =0;
+
+    postOrientationData.x =0;
+    postOrientationData.y =0;
+    postOrientationData.z =0;
+
+    preDeltaOrientationData.x=0;
+    preDeltaOrientationData.y =0;
+    preDeltaOrientationData.z =0;
+
+    postDeltaOrientationData.x=0;
+    postDeltaOrientationData.y=0;
+    postDeltaOrientationData.z=0;
+
+    
 
     counter.x = 0;
     counter.y = 0;
