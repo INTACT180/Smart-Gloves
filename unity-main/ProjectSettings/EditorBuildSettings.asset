@@ -50,3 +50,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/_Scenes/ViewExeciseDetails.unity
     guid: f10235718ceae4ae89fbde64fd48e998
+  - enabled: 1
+    path: Assets/_Scenes/Scan.unity
+    guid: 3d3141bdd210b4707bacee7504ac2d46

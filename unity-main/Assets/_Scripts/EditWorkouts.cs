@@ -41,7 +41,7 @@ public class EditWorkouts : MonoBehaviour {
 				// Give the buttons an action to load a screen that displays its details. 
 				button.GetComponent<Button> ().onClick.AddListener (
 					() => {
-						if (pageTitle.GetComponentInChildren<Text>().text.Equals ("Create/Edit Workout")) {
+						if (pageTitle.GetComponentInChildren<Text>().text.Equals ("Edit Exercises")) {
 							goToViewExerciseDetailsScene (button);
 						} else if (pageTitle.GetComponentInChildren<Text>().text.Equals ("Select Exercise")) {
 							goToExerciseScreenScene(button);

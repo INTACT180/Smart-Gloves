@@ -47,7 +47,8 @@ public class Controller : MonoBehaviour
 		DisconnectLeft,
 		DisconnectRight,
 		ReadLeft,
-		ReadRight
+		ReadRight,
+		ReadBoth
 	}
 
 	private bool _connected = false;
@@ -455,6 +456,17 @@ public class Controller : MonoBehaviour
 					SetState (States.ReadRight, 0.01f);
 					break;
 
+				case States.ReadBoth:
+					BluetoothLEHardwareInterface.ReadCharacteristic (_deviceAddressRight, ServiceUUID, ReadCharacteristic, ( characteristicUUID, bytes) => {
+						ReactToInput ( bytes, _deviceAddressRight);
+						BluetoothLEHardwareInterface.ReadCharacteristic (_deviceAddressLeft, ServiceUUID, ReadCharacteristic, ( charUID, bits) => {
+							ReactToInput( bits,_deviceAddressLeft);
+						});
+					});
+					SetState (States.ReadBoth, 0.01f);
+					break;
+
+
 				case States.Unsubscribe:
 					BluetoothLEHardwareInterface.UnSubscribeCharacteristic (_deviceAddressLeft, ServiceUUID, ReadCharacteristic, null);
 					// no red support
@@ -619,6 +631,12 @@ public class Controller : MonoBehaviour
 		if(ConnectedRight)
 			SetState (States.ReadRight, 0.1f);
 
+	}
+
+	public void ReadBoth()
+	{
+		if (ConnectedLeft && ConnectedRight)
+			SetState (States.ReadBoth, 0.1f);
 	}
 
 
