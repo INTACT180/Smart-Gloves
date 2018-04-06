@@ -112,7 +112,13 @@ class BNOAbstraction
   xyz prePositionData;
   xyz postPositionData;
   xyz_int counter;
-
+  
+  xyz preDeltaOrientationData;
+  xyz postDeltaOrientationData;
+  
+  xyz preOrientationData;
+  xyz postOrientationData;
+  
   xyz orientationData;
   xyz accelerationTransferData;
   
@@ -147,6 +153,8 @@ class BNOAbstraction
   void writeCalibrationDataToFile(adafruit_bno055_offsets_t newCalib);
 
   xyz* calculatePosition();
+
+  void calculateOrientation();
   
   public:
 
