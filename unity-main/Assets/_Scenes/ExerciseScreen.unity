@@ -606,7 +606,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
 --- !u!1 &280367855
 GameObject:
@@ -1141,7 +1141,7 @@ Transform:
   m_LocalScale: {x: 1.229182, y: 1.229182, z: 1.229182}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &518125502
 MeshRenderer:
@@ -1736,7 +1736,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &739452226
 GameObject:
@@ -2635,58 +2635,60 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1110014084}
---- !u!1 &1169433574
+--- !u!1 &1202011966
 GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   serializedVersion: 5
   m_Component:
-  - component: {fileID: 1169433575}
-  - component: {fileID: 1169433576}
+  - component: {fileID: 1202011968}
+  - component: {fileID: 1202011967}
   m_Layer: 0
-  m_Name: Responder
+  m_Name: Controller
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1169433575
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1169433574}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -13.74, y: 3.11, z: -10}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1169433576
+--- !u!114 &1202011967
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1169433574}
+  m_GameObject: {fileID: 1202011966}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aef2ea4b065a244958da60262917d9c8, type: 3}
+  m_Script: {fileID: 11500000, guid: cdf8774d30e39417d8a36fbc4b7d1081, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lvlMng: {fileID: 114901405367294928, guid: 4c7ef8a5ac2bd49b096f964af726021d, type: 2}
-  CubeLeft: {fileID: 0}
-  CubeRight: {fileID: 0}
-  xyz: []
-  sceneTitle: {fileID: 0}
-  actionButton: {fileID: 0}
-  numberOfSetsField: {fileID: 0}
-  startTimerField: {fileID: 0}
-  restTimerField: {fileID: 0}
-  gameTimerText: {fileID: 0}
-  currentStageText: {fileID: 0}
-  exerciseNameLabel: {fileID: 0}
+  LeftName: Bluefruit52
+  RightName: Redfruit52
+  blueCube: {fileID: 0}
+  redCube: {fileID: 0}
+  ServiceUUID: 6E400001-B5A3-F393-E0A9-E50E24DCCA9E
+  ReadCharacteristic: 6E400003-B5A3-F393-E0A9-E50E24DCCA9E
+  WriteCharacteristic: 6E400002-B5A3-F393-E0A9-E50E24DCCA9E
+  OrientationLeft: {x: 0, y: 0, z: 0}
+  OrientationRight: {x: 0, y: 0, z: 0}
+  AccelerationLeft: {x: 0, y: 0, z: 0}
+  AccelerationRight: {x: 0, y: 0, z: 0}
+  ConnectedLeft: 0
+  ConnectedRight: 0
+  ModifyLeft: 0
+--- !u!4 &1202011968
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1202011966}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 384, y: 512, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1263072201
 GameObject:
   m_ObjectHideFlags: 0
@@ -4022,7 +4024,7 @@ Transform:
   m_LocalScale: {x: 1.229182, y: 1.229182, z: 1.229182}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &1862030388
 MeshRenderer:
@@ -4265,7 +4267,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
