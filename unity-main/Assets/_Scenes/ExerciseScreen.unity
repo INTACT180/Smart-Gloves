@@ -1724,6 +1724,7 @@ MonoBehaviour:
   restTimerField: {fileID: 514685743}
   goalRepsField: {fileID: 1477143707}
   currentSetField: {fileID: 896779602}
+  currentRepField: {fileID: 680655572}
   gameTimerText: {fileID: 1502129166}
   currentStageText: {fileID: 1279577810}
   exerciseNameLabel: {fileID: 1502129166}

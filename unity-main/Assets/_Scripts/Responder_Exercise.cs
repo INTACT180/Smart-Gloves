@@ -335,7 +335,7 @@ class BenchPress
 	public Vector3 refrenceOrientationLeft;
 	public Vector3 refrenceOrientationRight;
 
-    Vector3 bounds  = new Vector3(50.0f,50.0f,50.0f);
+    Vector3 bounds  = new Vector3(15.0f,15.0f,15.0f);
 
 	public int Repitition = 0;
 
