@@ -6,6 +6,7 @@
 using UnityEngine;
 using System.Text;
 using System;
+using System.Timers;
 
 public class Controller : MonoBehaviour
 {
@@ -19,6 +20,11 @@ public class Controller : MonoBehaviour
 	public string ServiceUUID =         "6E400001-B5A3-F393-E0A9-E50E24DCCA9E";
 	public string ReadCharacteristic =  "6E400003-B5A3-F393-E0A9-E50E24DCCA9E";
 	public string WriteCharacteristic = "6E400002-B5A3-F393-E0A9-E50E24DCCA9E";
+
+	Timer leftTimer;
+	Timer rightTimer;
+
+
 
 	public Vector3 OrientationLeft   = new Vector3();
 	public Vector3 OrientationRight  = new Vector3();
@@ -116,6 +122,16 @@ public class Controller : MonoBehaviour
 	void Start ()
 	{
 		StartProcess ();
+
+		leftTimer = new System.Timers.Timer();
+		leftTimer.Elapsed+=new ElapsedEventHandler(TimerLeftExpired);
+		leftTimer.Interval=250;
+		leftTimer.Enabled=false;
+
+		rightTimer = new System.Timers.Timer();
+		rightTimer.Elapsed+=new ElapsedEventHandler(TimerRightExpired);
+		rightTimer.Interval=250;
+		rightTimer.Enabled=false;
 
 		LeftName = "";
 		storedDeviceAddressLeft = _deviceAddressLeft  = PlayerPrefs.GetString ("Left Address");
@@ -518,6 +534,10 @@ public class Controller : MonoBehaviour
 	public void SendStringLeft (string s)
 	{
 		//TODO: need to specify who we are sending what t
+		if (leftTimer.Enabled)
+			return;
+		leftTimer.Enabled = true;
+
 		byte[] data = Encoding.ASCII.GetBytes(s);
 		print("Sending String");
 		BluetoothLEHardwareInterface.WriteCharacteristic (_deviceAddressLeft, ServiceUUID, WriteCharacteristic, data, data.Length, true, (characteristicUUID) => {
@@ -526,6 +546,10 @@ public class Controller : MonoBehaviour
 	}
 	public void SendStringRight (string s)
 	{
+		if (rightTimer.Enabled)
+			return;
+		rightTimer.Enabled = true;
+
 		//TODO: need to specify who we are sending what t
 		byte[] data = Encoding.ASCII.GetBytes(s);
 		print("Sending String");
@@ -536,6 +560,12 @@ public class Controller : MonoBehaviour
 
 	public void SendStringBoth (string s)
 	{
+		if (leftTimer.Enabled) {
+			SendStringRight (s);
+			return;
+		}
+		leftTimer.Enabled = true;
+
 		//TODO: need to specify who we are sending what t
 		byte[] data = Encoding.ASCII.GetBytes(s);
 		print("Sending String");
@@ -658,6 +688,15 @@ public class Controller : MonoBehaviour
 	{
 		reading = false;
 		SetState (States.None, 0.1f);
+	}
+
+	void TimerLeftExpired(object source, ElapsedEventArgs e)
+	{
+		leftTimer.Enabled = false;
+	}
+		void TimerRightExpired(object source, ElapsedEventArgs e)
+	{
+		rightTimer.Enabled = false;
 	}
 
 }
