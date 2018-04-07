@@ -63,7 +63,7 @@ public class Responder_Exercise : MonoBehaviour {
 		Bench_Press
 	}
 
-	Exercise Routine = Exercise.Bench_Press;
+	Exercise Routine = Exercise.Bicep_Curl;
 
 	Hand currentHand;
 
@@ -243,7 +243,15 @@ public class Responder_Exercise : MonoBehaviour {
 			break;
 
 		case Exercise.Bicep_Curl:
-
+			if (BicepCurl.instance == null) {
+				BicepCurl.Initilize (controller.OrientationLeft, controller.OrientationRight);
+			} else {
+				BicepCurl.instance.Update (
+					controller.OrientationLeft, 
+					controller.AccelerationLeft,
+					controller.OrientationRight,
+					controller.AccelerationRight);
+			}
 			break;
 		}
 			
@@ -262,7 +270,10 @@ public class Responder_Exercise : MonoBehaviour {
 			break;
 
 		case Exercise.Bicep_Curl:
-
+			if (BicepCurl.instance != null)
+			{
+				return BicepCurl.instance.Repitition;
+			}
 			break;
 		}
 
@@ -280,7 +291,7 @@ public class Responder_Exercise : MonoBehaviour {
 			break;
 
 		case Exercise.Bicep_Curl:
-
+			BicepCurl.Complete ();
 			break;
 		}
 	}
@@ -335,7 +346,7 @@ class BenchPress
 	public Vector3 refrenceOrientationLeft;
 	public Vector3 refrenceOrientationRight;
 
-    Vector3 bounds  = new Vector3(15.0f,15.0f,15.0f);
+	Vector3 bounds  = new Vector3(15.0f,15.0f,15.0f);
 
 	public int Repitition = 0;
 
@@ -495,3 +506,345 @@ class BenchPress
 
 
 }
+
+class BicepCurl
+{
+	public static BicepCurl instance = null; 
+
+	public Vector3 refrenceOrientationLeft;
+	public Vector3 refrenceOrientationRight;
+
+	private bool leftAcc = false;
+	private bool leftRotBreach = false;
+
+	private bool rightAcc = false;
+	private bool rightRotBreach = false;
+
+	public int Repitition = 0;
+
+	enum GloveState
+	{
+		Awaiting,
+		ReadyToTransition
+	}
+
+	enum Stage
+	{
+		Exodus,
+		Return
+	}
+
+	enum Hand
+	{
+		Left,
+		Right
+	}
+
+	Vector3 lowerBoundry = new Vector3 (30, 150, 10);
+	Vector3 upperBoundry = new Vector3 (30, 10, 10);
+
+	Stage currentStage = Stage.Exodus;
+
+	GloveState leftState = GloveState.Awaiting;
+	GloveState rightState = GloveState.Awaiting;
+
+	public BicepCurl(Vector3 oLeft, Vector3 oRight)
+	{
+		UpdateRefrenceOrienation (oLeft, oRight);
+
+	}
+
+	public static void Initilize(Vector3 oLeft, Vector3 oRight)
+	{
+		instance = new BicepCurl (oLeft, oRight);
+	}
+
+	public static void Complete()
+	{
+		instance = null;
+	}
+
+	public void UpdateRefrenceOrienation (Vector3 oLeft, Vector3 oRight)
+	{
+		refrenceOrientationLeft = oLeft;
+		refrenceOrientationRight = oRight;
+	}
+
+
+	public void Update(Vector3 oLeft, Vector3 aLeft, Vector3 oRight, Vector3 aRight)
+	{
+		if (leftState == GloveState.Awaiting) {
+			leftState = DetermineTransition (refrenceOrientationLeft, oLeft, aLeft,Hand.Left);
+		}
+
+		if (rightState == GloveState.Awaiting) {
+			rightState = DetermineTransition (refrenceOrientationRight, oRight, aRight, Hand.Right);
+		}
+
+		if (!areInBoundsCustom (oLeft, refrenceOrientationLeft, lowerBoundry,upperBoundry)) {
+			if (!areInBoundsCustom (oRight, refrenceOrientationRight, lowerBoundry,upperBoundry)) {
+				Responder_Exercise.BeepBoth ();
+			} else {
+				Responder_Exercise.BeepLeft();
+			}
+		}
+		else if (!areInBoundsCustom (oRight, refrenceOrientationRight, lowerBoundry,upperBoundry)) {
+			Responder_Exercise.BeepRight();
+		}
+
+		if (isReadyToTransition ()) {
+			currentStage = Transition ();
+		}
+
+
+	}
+
+	Stage Transition()
+	{
+
+		switch (currentStage) 
+		{
+		case Stage.Exodus:
+			rightState = GloveState.Awaiting;
+			leftState = GloveState.Awaiting;
+			resetFlags ();
+			return Stage.Return;
+
+		case Stage.Return:
+			Repitition++;
+			rightState = GloveState.Awaiting;
+			leftState = GloveState.Awaiting;
+			resetFlags ();
+			return Stage.Exodus;
+		}
+
+		return Stage.Exodus;
+
+
+	}
+
+	public bool isReadyToTransition()
+	{
+		return rightState == GloveState.ReadyToTransition && leftState == GloveState.ReadyToTransition;
+	}
+
+	GloveState DetermineTransition(Vector3 oRef, Vector3 o, Vector3 a, Hand hand)
+	{
+		switch (currentStage) 
+		{
+		case Stage.Exodus:
+			if (!hasAccelerated (hand)) {
+				updateHasAccelerated (hand, a);
+			}
+			if (!hasBreachedBounds (hand)) {
+				updateHasBreachedBounds (hand, o);
+			}
+
+			if (hasAccelerated (hand) && hasBreachedBounds (hand))
+				return GloveState.ReadyToTransition;
+
+			break;
+		case Stage.Return:
+			if (!hasAccelerated (hand)) {
+				updateHasReversedAcceleration (hand, a);
+			}
+			if (!hasBreachedBounds (hand)) {
+				updateReverseHasBreachedBounds (hand, o);
+			}
+			if (hasAccelerated (hand) && hasBreachedBounds (hand))
+				return GloveState.ReadyToTransition;
+			break;
+		}
+
+		return GloveState.Awaiting;
+	}
+
+	void updateHasAccelerated(Hand hand, Vector3 a)
+	{
+		if (hand == Hand.Left)
+			leftAcc = a.z < -0.8f;
+		else
+			rightAcc = a.z < -0.8f;
+		return;
+	}
+
+	void updateHasReversedAcceleration(Hand hand, Vector3 a)
+	{
+		if (hand == Hand.Left)
+			leftAcc = a.z > 0.8f;
+		else
+			rightAcc = a.z >0.8f;
+		return;
+	}
+
+	void updateHasBreachedBounds (Hand hand, Vector3 o)
+	{
+		Vector3 refer;
+
+		if (hand == Hand.Left)
+			refer = refrenceOrientationLeft;
+		else
+			refer = refrenceOrientationRight;
+		
+		if( areInBoundsCustom(
+			o,
+			refer,
+			new Vector3(180, 50, 180),
+			new Vector3(180, 180, 180)))
+		{
+			if(hand == Hand.Left)
+				leftRotBreach = true;
+			else
+				rightRotBreach = true;
+		}
+				
+	}
+
+	void updateReverseHasBreachedBounds (Hand hand, Vector3 o)
+	{
+		Vector3 refer;
+
+		if (hand == Hand.Left)
+			refer = refrenceOrientationLeft;
+		else
+			refer = refrenceOrientationRight;
+
+		if( areInBoundsCustom(
+			o,
+			refer,
+			new Vector3(180, 220, 180),
+			new Vector3(180, -50, 180)))
+		{
+			if(hand == Hand.Left)
+				leftRotBreach = true;
+			else
+				rightRotBreach = true;
+		}
+
+	}
+
+	void resetFlags()
+	{
+		leftAcc = false;
+		rightAcc = false;
+		leftRotBreach = false;
+		rightRotBreach = false;
+	}
+
+	bool hasAccelerated( Hand hand)
+	{
+		if (hand == Hand.Left)
+			return leftAcc;
+
+		return rightAcc;
+	}
+
+	bool hasBreachedBounds( Hand hand)
+	{
+		if (hand == Hand.Left)
+			return leftRotBreach;
+		
+		return rightRotBreach;
+	}
+
+	public static bool areWeInBounds(Vector3 currentOrientation, Vector3 originalReferencePoint, Vector3 boundaryOffset)
+	{
+		bool inBound = true;
+		Vector3 high, low;
+		Vector3 a, b, c;
+
+		//For the X axis
+		high.x = Math.Max(originalReferencePoint.x, currentOrientation.x);
+		low.x  = Math.Min(originalReferencePoint.x, currentOrientation.x);
+
+		a.x = high.x - low.x;
+		b.x = 360 - high.x + low.x;
+		c.x = Math.Min(a.x, b.x);
+
+		if (c.x > boundaryOffset.x)
+			inBound = false;
+
+		//For the Y axis
+		high.y = Math.Max(originalReferencePoint.y, currentOrientation.y);
+		low.y = Math.Min(originalReferencePoint.y, currentOrientation.y);
+
+		a.y = high.y - low.y;
+		b.y = 360 - high.y + low.y;
+		c.y = Math.Min(a.y, b.y);
+
+		if (c.y > boundaryOffset.y)
+			inBound = false;
+
+		//For the Z axis
+		high.z = Math.Max(originalReferencePoint.z, currentOrientation.z);
+		low.z = Math.Min(originalReferencePoint.z, currentOrientation.z);
+
+		a.z = high.z - low.z;
+		b.z = 360 - high.z + low.z;
+		c.z = Math.Min(a.z, b.z);
+
+		if (c.z > boundaryOffset.z)
+			inBound = false;
+
+		return inBound;
+	}
+
+	public static bool areInBoundsCustom(Vector3 currentOrientation, Vector3 originalReferencePoint, Vector3 lowerBounds, Vector3 upperBounds)
+	{
+		bool inBound = true;
+
+		Vector3 upper = correctForDegrees(originalReferencePoint + upperBounds);
+		Vector3 lower = correctForDegrees(originalReferencePoint - lowerBounds);
+
+		if (!isAngleBetween(upper.x, lower.x, currentOrientation.x))
+			inBound = false;
+		if (isAngleBetween(upper.y, lower.y, currentOrientation.y))
+			inBound = false;
+		if (isAngleBetween(upper.z, lower.z, currentOrientation.z))
+			inBound = false;
+
+		return inBound;
+	}
+
+	public static bool isAngleBetween(float upper, float lower, float angle)
+	{
+		if(upper > lower)
+		{
+			return (angle <upper) && (angle > lower);
+		}else {
+			return ((angle <360) && (angle > lower) || (angle > 0) && (angle < upper));
+		}
+	}
+
+	public static Vector3 correctForDegrees(Vector3 original)
+	{
+		float x, y, z;
+
+		if (original.x >= 360.0f) 
+			x = original.x-360.0f;
+		else if( original.x <0)
+			x = 360.0f + original.x;
+		else
+			x = original.x;
+
+		if (original.y >= 360.0f)
+			y = original.y - 360.0f;
+		else if (original.y < 0.0f)
+			y = 360.0f + original.y;
+		else
+			y = original.y;
+
+		if (original.z >= 360.0f) 
+			z = original.z-360.0f;
+		else if( original.z <0.0f)
+			z = 360.0f + original.z;
+		else
+			z = original.z;
+
+		return new Vector3(x,y,z);
+		
+	}
+
+
+}
+
