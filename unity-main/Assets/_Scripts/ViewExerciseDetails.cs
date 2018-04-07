@@ -13,6 +13,7 @@ public class ViewExerciseDetails : MonoBehaviour {
 	public InputField numberOfSetsField;
 	public InputField startTimerField;
 	public InputField restTimerField;
+	public InputField goalRepsField;
 
 	public Text debugText;
 
@@ -31,6 +32,7 @@ public class ViewExerciseDetails : MonoBehaviour {
 		numberOfSetsField.text = ((List<string>)workoutHistory.workoutTable[exerciseName])[1];
 		startTimerField.text = ((List<string>)workoutHistory.workoutTable[exerciseName])[2];
 		restTimerField.text = ((List<string>)workoutHistory.workoutTable[exerciseName])[3];
+		goalRepsField.text = ((List<string>)workoutHistory.workoutTable[exerciseName])[4];
 	}
 
 	public void save () {
@@ -45,6 +47,7 @@ public class ViewExerciseDetails : MonoBehaviour {
 		((List<string>)workoutHistory.workoutTable [exerciseName]) [1] = numberOfSetsField.text;
 		((List<string>)workoutHistory.workoutTable [exerciseName]) [2] = startTimerField.text;
 		((List<string>)workoutHistory.workoutTable [exerciseName]) [3] = restTimerField.text;
+		((List<string>)workoutHistory.workoutTable [exerciseName]) [4] = goalRepsField.text;
 
 		file = File.Create (Application.persistentDataPath + "/workoutTable.dat");
 		binaryFormatter.Serialize (file, workoutHistory);

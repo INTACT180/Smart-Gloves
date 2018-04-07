@@ -20,9 +20,14 @@ public class Responder_Exercise : MonoBehaviour {
 	public Button sceneTitle;
 	public Button actionButton;
 
+	// Goal Stats input fields.
 	public InputField numberOfSetsField;
 	public InputField startTimerField;
 	public InputField restTimerField;
+	public InputField goalRepsField;
+
+	// Current Stats input fields.
+	public InputField currentSetField;
 
 	public Text gameTimerText;
 	public Text currentStageText;
@@ -100,10 +105,12 @@ public class Responder_Exercise : MonoBehaviour {
 		numberOfSetsField.text = ((List<string>)workoutHistory.workoutTable[exerciseName])[1];
 		startTimerField.text = ((List<string>)workoutHistory.workoutTable[exerciseName])[2];
 		restTimerField.text = ((List<string>)workoutHistory.workoutTable[exerciseName])[3];
+		goalRepsField.text = ((List<string>)workoutHistory.workoutTable[exerciseName])[4];
 
 		// Parses the start time entered by the user to a float and sets the start timer
 		startTimerVal = float.Parse (startTimerField.text);
 		restTimerVal = float.Parse (restTimerField.text);
+
 
 
 	}
@@ -133,11 +140,10 @@ public class Responder_Exercise : MonoBehaviour {
 			startTimerVal -= Time.deltaTime;
 			gameTimerText.text = startTimerVal.ToString ("f0");
 			if (startTimerVal <= 0) {
-				decreasestartTimer = false;
+//				decreasestartTimer = false;
 				currentStageText.text = "Waiting for User to Finish Exercise";
 				currentStageText.color = Color.red;
-
-//				increaseExerciseTimer = true;
+				startTimerVal = float.Parse (startTimerField.text);
 				currentState = States.InProgress;
 			}
 
@@ -145,14 +151,13 @@ public class Responder_Exercise : MonoBehaviour {
 
 		case States.InProgress:
 			//run exercise itteration for each glove
-
 			//
 //			Debug.Log("running state IN PROGRESS");
 
 			if(GetReps() > int.Parse(numberOfSetsField.text ))
 			{
 				
-			}
+			}		
 			//Are reps finished? and are sets done? -> Finished state
 			//Are reps finished? -> Rest State ++Sets Set Rest Count down
 			//continue in progress...
@@ -165,13 +170,26 @@ public class Responder_Exercise : MonoBehaviour {
 			string timerString = string.Format("{1:00}:{2:00}", hours, minutes, seconds);
 			gameTimerText.text = timerString;
 
-//			currentState = States.Rest;
-
 			break;
 
 		case States.Rest:
 			// Check if rest timer expired... if yes goto -> Inprogress..
-	
+		
+
+			// Decreses the rest timer.
+			restTimerVal-= Time.deltaTime;
+			gameTimerText.text = restTimerVal.ToString ("f0");
+
+			// The rest timer completes.
+			if (restTimerVal <= 0) {
+				currentStageText.text = "Counting Down Start Timer";
+				currentStageText.color = Color.red;
+
+				currentState = States.SetUp;
+				excerciseTimer = 0f;
+				restTimerVal = float.Parse (restTimerField.text);
+			}
+
 			break;
 
 		case States.Finish:
@@ -244,10 +262,30 @@ public class Responder_Exercise : MonoBehaviour {
 	}
 
 	public void ActionButton () {
+		// State in which the exercise needs to be started.
 		if (actionButton.GetComponentInChildren<Text> ().text.ToLower ().Equals ("start exercise")) {
-			actionButton.GetComponentInChildren<Text> ().text = "Stop";
+			actionButton.GetComponentInChildren<Text> ().text = "Stop Set";
 			currentStageText.text = "Counting Down Start Timer";
+			currentSetField.text = "1";
 			currentState = States.SetUp;	
+		} else if (actionButton.GetComponentInChildren<Text> ().text.ToLower ().Equals ("stop set")) {
+
+			// Checks if the current number of sets and the goal number of sets match.
+			if (!currentSetField.text.Equals (numberOfSetsField.text)) {
+				actionButton.GetComponentInChildren<Text> ().text = "Stop Set";
+				currentStageText.text = "Counting Down Rest Timer";
+
+				// Updates the current set number.
+				int currentSet = int.Parse (currentSetField.text);
+				currentSet += 1;
+				currentSetField.text = currentSet.ToString ();
+				currentState = States.Rest;
+			} else {
+				actionButton.GetComponentInChildren<Text> ().text = "Start Exercise";
+				currentStageText.text = "Exercise Has Been Completed";
+				currentState = States.Finish;
+				gameTimerText.text = "00:00";
+			}
 		}
 	}
 
