@@ -64,7 +64,7 @@ public class Responder_Exercise : MonoBehaviour {
 	States currentState;
 
 
-	Controller controller;
+	public static Controller controller;
 
 
 	// Use this for initialization
@@ -149,6 +149,10 @@ public class Responder_Exercise : MonoBehaviour {
 			//
 //			Debug.Log("running state IN PROGRESS");
 
+			if(GetReps() > int.Parse(numberOfSetsField.text ))
+			{
+				
+			}
 			//Are reps finished? and are sets done? -> Finished state
 			//Are reps finished? -> Rest State ++Sets Set Rest Count down
 			//continue in progress...
@@ -179,24 +183,253 @@ public class Responder_Exercise : MonoBehaviour {
 	}
 
 
-	void StartExercise()
+	void ExerciseUpdate()
 	{
 
-//		switch ()
-//		{
-//
-//		}
+		switch (Routine)
+		{
+		case Exercise.Bench_Press:
+			if (BenchPress.instance == null) {
+				BenchPress.Initilize (controller.OrientationLeft, controller.OrientationRight);
+			} else {
+				BenchPress.instance.Update (
+					controller.OrientationLeft, 
+					controller.AccelerationLeft,
+					controller.OrientationRight,
+					controller.AccelerationRight);
+			}
+			break;
+
+		case Exercise.Bicep_Curl:
+
+			break;
+		}
 			
 	}
 
-	public void ActionButton () {
+	int GetReps()
+	{
 
+		switch (Routine)
+		{
+		case Exercise.Bench_Press:
+			if (BenchPress.instance != null)
+			{
+				return BenchPress.instance.Repitition;
+			}
+			break;
+
+		case Exercise.Bicep_Curl:
+
+			break;
+		}
+
+		return 0;
+
+	}
+
+	void FinishExercise()
+	{
+
+		switch (Routine)
+		{
+		case Exercise.Bench_Press:
+			BenchPress.Complete ();
+			break;
+
+		case Exercise.Bicep_Curl:
+
+			break;
+		}
+	}
+
+	public void ActionButton () {
 		if (actionButton.GetComponentInChildren<Text> ().text.ToLower ().Equals ("start exercise")) {
 			actionButton.GetComponentInChildren<Text> ().text = "Stop";
 			currentStageText.text = "Counting Down Start Timer";
 			currentState = States.SetUp;	
 		}
+	}
 
+	public static void BeepLeft()
+	{
+		controller.SendStringLeft ("B");
+	}
+	public static void BeepRight()
+	{
+		controller.SendStringRight ("B");
+	}
+	public static void BeepBoth()
+	{
+		controller.SendStringBoth ("B");
 	}
 		
+}
+
+class BenchPress
+{
+	public static BenchPress instance = null; 
+
+	public Vector3 refrenceOrientationLeft;
+	public Vector3 refrenceOrientationRight;
+
+    Vector3 bounds  = new Vector3(12.0f,12.0f,12.0f);
+
+	public int Repitition = 0;
+
+	enum GloveState
+	{
+		Awaiting,
+		ReadyToTransition
+	}
+
+	enum Stage
+	{
+		Exodus,
+		Return
+	}
+
+	Stage currentStage = Stage.Exodus;
+
+	GloveState leftState = GloveState.Awaiting;
+	GloveState rightState = GloveState.Awaiting;
+
+	public BenchPress(Vector3 oLeft, Vector3 oRight)
+	{
+		UpdateRefrenceOrienation (oLeft, oRight);
+
+	}
+
+	public static void Initilize(Vector3 oLeft, Vector3 oRight)
+	{
+		instance = new BenchPress (oLeft, oRight);
+	}
+
+	public static void Complete()
+	{
+		instance = null;
+	}
+
+	public void UpdateRefrenceOrienation (Vector3 oLeft, Vector3 oRight)
+	{
+		refrenceOrientationLeft = oLeft;
+		refrenceOrientationRight = oRight;
+	}
+
+
+	public void Update(Vector3 oLeft, Vector3 aLeft, Vector3 oRight, Vector3 aRight)
+	{
+		if (leftState == GloveState.Awaiting) {
+			leftState = DetermineTransition (refrenceOrientationLeft, oLeft, aLeft);
+		}
+
+		if (rightState == GloveState.Awaiting) {
+			rightState = DetermineTransition (refrenceOrientationRight, oRight, aRight);
+		}
+
+		if (!areWeInBounds (oLeft, refrenceOrientationLeft, bounds)) {
+			if (!areWeInBounds (oRight, refrenceOrientationRight, bounds)) {
+				Responder_Exercise.BeepBoth ();
+			} else {
+				Responder_Exercise.BeepLeft();
+			}
+		}
+		else if (!areWeInBounds (oRight, refrenceOrientationRight, bounds)) {
+			Responder_Exercise.BeepRight();
+		}
+
+		if (isReadyToTransition ()) {
+			currentStage = Transition ();
+		}
+
+	
+	}
+
+ Stage Transition()
+	{
+
+		switch (currentStage) 
+		{
+		case Stage.Exodus:
+			rightState = GloveState.Awaiting;
+			leftState = GloveState.Awaiting;
+			return Stage.Return;
+
+		case Stage.Return:
+			Repitition++;
+			rightState = GloveState.Awaiting;
+			leftState = GloveState.Awaiting;
+			return Stage.Exodus;
+		}
+
+		return Stage.Exodus;
+
+
+	}
+
+	public bool isReadyToTransition()
+	{
+		return rightState == GloveState.ReadyToTransition && leftState == GloveState.ReadyToTransition;
+	}
+
+   GloveState DetermineTransition(Vector3 oRef, Vector3 o, Vector3 a)
+	{
+		switch (currentStage) 
+		{
+		case Stage.Exodus:
+			if (a.x > 0.8f)
+				return GloveState.ReadyToTransition;
+			break;
+		case Stage.Return:
+			if (a.x < -0.8f)
+				return GloveState.ReadyToTransition;
+			break;
+		}
+
+		return GloveState.Awaiting;
+	}
+
+	public static bool areWeInBounds(Vector3 currentOrientation, Vector3 originalReferencePoint, Vector3 boundaryOffset)
+	{
+		bool inBound = true;
+		Vector3 high, low;
+		Vector3 a, b, c;
+
+		//For the X axis
+		high.x = Math.Max(originalReferencePoint.x, currentOrientation.x);
+		low.x  = Math.Min(originalReferencePoint.x, currentOrientation.x);
+
+		a.x = high.x - low.x;
+		b.x = 360 - high.x + low.x;
+		c.x = Math.Min(a.x, b.x);
+
+		if (c.x > boundaryOffset.x)
+			inBound = false;
+
+		//For the Y axis
+		high.y = Math.Max(originalReferencePoint.y, currentOrientation.y);
+		low.y = Math.Min(originalReferencePoint.y, currentOrientation.y);
+
+		a.y = high.y - low.y;
+		b.y = 360 - high.y + low.y;
+		c.y = Math.Min(a.y, b.y);
+
+		if (c.y > boundaryOffset.y)
+			inBound = false;
+
+		//For the Z axis
+		high.z = Math.Max(originalReferencePoint.z, currentOrientation.z);
+		low.z = Math.Min(originalReferencePoint.z, currentOrientation.z);
+
+		a.z = high.z - low.z;
+		b.z = 360 - high.z + low.z;
+		c.z = Math.Min(a.z, b.z);
+
+		if (c.z > boundaryOffset.z)
+			inBound = false;
+
+		return inBound;
+	}
+
+
 }
