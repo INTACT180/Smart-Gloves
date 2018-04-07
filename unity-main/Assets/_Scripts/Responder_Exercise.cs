@@ -798,9 +798,9 @@ class BicepCurl
 
 		if (!isAngleBetween(upper.x, lower.x, currentOrientation.x))
 			inBound = false;
-		if (isAngleBetween(upper.y, lower.y, currentOrientation.y))
+		if (!isAngleBetween(upper.y, lower.y, currentOrientation.y))
 			inBound = false;
-		if (isAngleBetween(upper.z, lower.z, currentOrientation.z))
+		if (!isAngleBetween(upper.z, lower.z, currentOrientation.z))
 			inBound = false;
 
 		return inBound;
