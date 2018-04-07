@@ -28,6 +28,7 @@ public class Responder_Exercise : MonoBehaviour {
 
 	// Current Stats input fields.
 	public InputField currentSetField;
+	public InputField currentRepField;
 
 	public Text gameTimerText;
 	public Text currentStageText;
@@ -154,8 +155,31 @@ public class Responder_Exercise : MonoBehaviour {
 			//
 //			Debug.Log("running state IN PROGRESS");
 
-			if(GetReps() > int.Parse(numberOfSetsField.text ))
+			ExerciseUpdate ();
+
+			int currentFinishedReps = GetReps ();
+
+			currentRepField.text = currentFinishedReps.ToString ();
+
+			//update current rep text
+			if(currentFinishedReps >= int.Parse(goalRepsField.text)) //check if reps >= number
 			{
+
+				FinishExercise ();
+
+				int currentSetNumber = int.Parse (currentSetField.text);
+		
+				currentSetField.text = (++currentSetNumber).ToString ();
+					
+				if (currentSetField.text.Equals (numberOfSetsField)) {
+					currentState = States.Finish;
+				} else {
+					currentState = States.Rest;
+				}
+
+				//sets ++
+				//if sets >= total -> finished
+				//transition -> rest
 				
 			}		
 			//Are reps finished? and are sets done? -> Finished state
@@ -311,7 +335,7 @@ class BenchPress
 	public Vector3 refrenceOrientationLeft;
 	public Vector3 refrenceOrientationRight;
 
-    Vector3 bounds  = new Vector3(12.0f,12.0f,12.0f);
+    Vector3 bounds  = new Vector3(50.0f,50.0f,50.0f);
 
 	public int Repitition = 0;
 

@@ -53,3 +53,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/_Scenes/Scan.unity
     guid: 3d3141bdd210b4707bacee7504ac2d46
+  - enabled: 0
+    path: Assets/_Scenes/ExerciseScene.unity
+    guid: 4dd0c11a1764e4dff94247da9078494c
