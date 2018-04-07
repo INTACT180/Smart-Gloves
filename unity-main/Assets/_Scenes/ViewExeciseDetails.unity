@@ -459,6 +459,7 @@ MonoBehaviour:
   numberOfSetsField: {fileID: 42936182}
   startTimerField: {fileID: 1106947453}
   restTimerField: {fileID: 2076264534}
+  goalRepsField: {fileID: 1424689825}
   debugText: {fileID: 351347825}
 --- !u!1 &351347822
 GameObject:
@@ -1698,7 +1699,7 @@ GameObject:
   - component: {fileID: 1424689826}
   - component: {fileID: 1424689825}
   m_Layer: 5
-  m_Name: Rest Timer Text Field (1)
+  m_Name: Goal Reps Text Field
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
