@@ -686,7 +686,7 @@ class BicepCurl
 		else
 			refer = refrenceOrientationRight;
 		
-		if( areInBoundsCustom(
+		if( !areInBoundsCustom(
 			o,
 			refer,
 			new Vector3(180, 50, 180),
@@ -709,7 +709,7 @@ class BicepCurl
 		else
 			refer = refrenceOrientationRight;
 
-		if( areInBoundsCustom(
+		if( !areInBoundsCustom(
 			o,
 			refer,
 			new Vector3(180, 220, 180),
