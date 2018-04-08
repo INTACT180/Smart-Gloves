@@ -15,7 +15,11 @@ public class Responder_Exercise : MonoBehaviour {
 
 	public Text[] xyz;
 
+
 	static public string exerciseName;
+
+	// string to be used to get what the current exercise is.
+	public string exerciseNameEnumValue;
 
 	public Button sceneTitle;
 	public Button actionButton;
@@ -103,6 +107,8 @@ public class Responder_Exercise : MonoBehaviour {
 
 		Debug.Log (workoutHistory.workoutTable.Count);
 
+		exerciseNameEnumValue = ((List<string>)workoutHistory.workoutTable[exerciseName])[0];
+
 		// Sets the text fields to the stored values.
 		numberOfSetsField.text = ((List<string>)workoutHistory.workoutTable[exerciseName])[1];
 		startTimerField.text = ((List<string>)workoutHistory.workoutTable[exerciseName])[2];
@@ -112,8 +118,6 @@ public class Responder_Exercise : MonoBehaviour {
 		// Parses the start time entered by the user to a float and sets the start timer
 		startTimerVal = float.Parse (startTimerField.text);
 		restTimerVal = float.Parse (restTimerField.text);
-
-
 
 	}
 

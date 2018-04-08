@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Responder_Settings : MonoBehaviour {
+public class CheckControllerConnection : MonoBehaviour {
 
 	public Text LeftGloveStatus;
 	public Text RightGloveStatus;
