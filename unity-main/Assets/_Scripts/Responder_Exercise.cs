@@ -15,7 +15,11 @@ public class Responder_Exercise : MonoBehaviour {
 
 	public Text[] xyz;
 
+
 	static public string exerciseName;
+
+	// string to be used to get what the current exercise is.
+	public string exerciseNameEnumValue;
 
 	public Button sceneTitle;
 	public Button actionButton;
@@ -29,6 +33,7 @@ public class Responder_Exercise : MonoBehaviour {
 	// Current Stats input fields.
 	public InputField currentSetField;
 	public InputField currentRepField;
+	public InputField totalNumberRepField;
 
 	public Text gameTimerText;
 	public Text currentStageText;
@@ -103,6 +108,8 @@ public class Responder_Exercise : MonoBehaviour {
 
 		Debug.Log (workoutHistory.workoutTable.Count);
 
+		exerciseNameEnumValue = ((List<string>)workoutHistory.workoutTable[exerciseName])[0];
+
 		// Sets the text fields to the stored values.
 		numberOfSetsField.text = ((List<string>)workoutHistory.workoutTable[exerciseName])[1];
 		startTimerField.text = ((List<string>)workoutHistory.workoutTable[exerciseName])[2];
@@ -112,8 +119,6 @@ public class Responder_Exercise : MonoBehaviour {
 		// Parses the start time entered by the user to a float and sets the start timer
 		startTimerVal = float.Parse (startTimerField.text);
 		restTimerVal = float.Parse (restTimerField.text);
-
-
 
 	}
 
@@ -147,8 +152,9 @@ public class Responder_Exercise : MonoBehaviour {
 				currentStageText.color = Color.red;
 				startTimerVal = float.Parse (startTimerField.text);
 				currentState = States.InProgress;
-			}
 
+				FinishExercise ();
+			}
 			break;
 
 		case States.InProgress:
@@ -162,14 +168,17 @@ public class Responder_Exercise : MonoBehaviour {
 
 			currentRepField.text = currentFinishedReps.ToString ();
 
+//			int totalNumReps = int.Parse (totalNumberRepField.text);
+//			totalNumberRepField.text = (++totalNumReps).ToString ();
+
 			//update current rep text
 			if(currentFinishedReps >= int.Parse(goalRepsField.text)) //check if reps >= number
 			{
 
-				FinishExercise ();
+//				FinishExercise ();
 
 				int currentSetNumber = int.Parse (currentSetField.text);
-		
+
 				currentSetField.text = (++currentSetNumber).ToString ();
 					
 				if (currentSetField.text.Equals (numberOfSetsField)) {
@@ -326,6 +335,7 @@ public class Responder_Exercise : MonoBehaviour {
 			actionButton.GetComponentInChildren<Text> ().text = "Stop Set";
 			currentStageText.text = "Counting Down Start Timer";
 			currentSetField.text = "1";
+			totalNumberRepField.text = "0";
 			currentState = States.SetUp;	
 		} else if (actionButton.GetComponentInChildren<Text> ().text.ToLower ().Equals ("stop set")) {
 
@@ -732,8 +742,8 @@ class BicepCurl
 		Right
 	}
 
-	Vector3 lowerBoundry = new Vector3 (30, 150, 10);
-	Vector3 upperBoundry = new Vector3 (30, 10, 10);
+	Vector3 lowerBoundry = new Vector3 (30, 150, 20);
+	Vector3 upperBoundry = new Vector3 (60, 20, 20);
 
 	Stage currentStage = Stage.Exodus;
 
