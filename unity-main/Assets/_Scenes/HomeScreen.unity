@@ -1392,7 +1392,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Create/Edit Exercise
+  m_Text: Edit Exercise
 --- !u!222 &1371470210
 CanvasRenderer:
   m_ObjectHideFlags: 0

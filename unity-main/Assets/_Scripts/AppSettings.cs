@@ -22,24 +22,7 @@ public class AppSettings : MonoBehaviour {
 	// Use this for initialization
 	// This could potentially be used for loading user settings when the app starts.
 	void Awake () {
-
-//		File.Delete (Application.persistentDataPath + "/workoutTable.dat");
-//
-//		Debug.Log ("The workout table was deleted");
-//
-//		DirectoryInfo dir = new DirectoryInfo(Application.persistentDataPath);
-//		FileInfo[] info = dir.GetFiles("*.*");
-//		Debug.Log (info.Length);
-//		foreach (FileInfo f in info) {
-//			Debug.Log (f.Name);
-//		}
-
-//		if (File.Exists (Application.persistentDataPath + "/workoutTable.dat")) {
-//			debugText.text = "The file still exists. + There are " + info.Length + "files in this directory";
-//		} else {
-//			debugText.text = "The file doesn't exist. + There are " + info.Length + "files in this directory";
-//		}
-
+		
 		if (File.Exists (Application.persistentDataPath + "/workoutTable.dat")) {
 			debugText.text = "The workout table file already exists.";
 			Debug.Log ("The file already exists");
@@ -51,22 +34,7 @@ public class AppSettings : MonoBehaviour {
 			debugText.text = "The workout table file was created for the first time.";
 		}
 	}
-
-	// Awake happens before Start()
-//	void Awake () {
-//
-////		debugText = GetComponent<Text> ();
-////
-////		debugText.text = "Yay";
-//
-//
-//	}
-	
-	// Update is called once per frame
-//	void Update () {
-//
-//	}
-
+		
 	public void save () {
 
 		BinaryFormatter binaryFormatter = new BinaryFormatter();
@@ -94,23 +62,6 @@ public class AppSettings : MonoBehaviour {
 
 		debugText.text = "Inserted into the workout table file.";
 	}
-
-//	public void Load () {
-//
-//		if (File.Exists(Application.persistentDataPath + "/playerInfo.dat")) {
-//			BinaryFormatter binaryFormatter = new BinaryFormatter();
-//			FileStream file = File.Open (Application.persistentDataPath + "/playerInfo.dat", FileMode.Open);
-//		
-//			Workout workout = (Workout) binaryFormatter.Deserialize(file);
-//			file.Close();
-//
-//			workoutName = workout.workoutName;
-//			numberOfSets = workout.numberOfSets;
-//			startTimer = workout.startTimer;
-//			restTimer = workout.restTimer;
-//		}
-//
-//	}
 }
 
 [Serializable]
