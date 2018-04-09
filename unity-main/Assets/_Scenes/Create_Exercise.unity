@@ -2043,7 +2043,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Create/Edit Workout
+  m_Text: Create Exercise
 --- !u!222 &1332420109
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2888,7 +2888,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Workout Name
+  m_Text: Exercise Name
 --- !u!222 &1953232231
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3303,7 +3303,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Enter the workout name...
+  m_Text: Enter the exercise name...
 --- !u!222 &2053374137
 CanvasRenderer:
   m_ObjectHideFlags: 0
