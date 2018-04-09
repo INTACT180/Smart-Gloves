@@ -65,7 +65,8 @@ public class Responder_Exercise : MonoBehaviour {
 
 	public enum Exercise{
 		Bicep_Curl,
-		Bench_Press
+		Bench_Press,
+		Inverted_Bench_Press
 	}
 
 	Exercise Routine = Exercise.Bicep_Curl;
@@ -262,6 +263,18 @@ public class Responder_Exercise : MonoBehaviour {
 					controller.AccelerationRight);
 			}
 			break;
+
+		case Exercise.Inverted_Bench_Press:
+			if (InvertedBenchPress.instance == null) {
+				InvertedBenchPress.Initilize (controller.OrientationLeft, controller.OrientationRight);
+			} else {
+				InvertedBenchPress.instance.Update (
+					controller.OrientationLeft, 
+					controller.AccelerationLeft,
+					controller.OrientationRight,
+					controller.AccelerationRight);
+			}
+			break;
 		}
 			
 	}
@@ -284,6 +297,13 @@ public class Responder_Exercise : MonoBehaviour {
 				return BicepCurl.instance.Repitition;
 			}
 			break;
+
+		case Exercise.Inverted_Bench_Press:
+			if (InvertedBenchPress.instance != null)
+			{
+				return InvertedBenchPress.instance.Repitition;
+			}
+			break;
 		}
 
 		return 0;
@@ -301,6 +321,10 @@ public class Responder_Exercise : MonoBehaviour {
 
 		case Exercise.Bicep_Curl:
 			BicepCurl.Complete ();
+			break;
+
+		case Exercise.Inverted_Bench_Press:
+			InvertedBenchPress.Complete ();
 			break;
 		}
 	}
@@ -465,6 +489,174 @@ class BenchPress
 			break;
 		case Stage.Return:
 			if (a.x < -0.8f)
+				return GloveState.ReadyToTransition;
+			break;
+		}
+
+		return GloveState.Awaiting;
+	}
+
+	public static bool areWeInBounds(Vector3 currentOrientation, Vector3 originalReferencePoint, Vector3 boundaryOffset)
+	{
+		bool inBound = true;
+		Vector3 high, low;
+		Vector3 a, b, c;
+
+		//For the X axis
+		high.x = Math.Max(originalReferencePoint.x, currentOrientation.x);
+		low.x  = Math.Min(originalReferencePoint.x, currentOrientation.x);
+
+		a.x = high.x - low.x;
+		b.x = 360 - high.x + low.x;
+		c.x = Math.Min(a.x, b.x);
+
+		if (c.x > boundaryOffset.x)
+			inBound = false;
+
+		//For the Y axis
+		high.y = Math.Max(originalReferencePoint.y, currentOrientation.y);
+		low.y = Math.Min(originalReferencePoint.y, currentOrientation.y);
+
+		a.y = high.y - low.y;
+		b.y = 360 - high.y + low.y;
+		c.y = Math.Min(a.y, b.y);
+
+		if (c.y > boundaryOffset.y)
+			inBound = false;
+
+		//For the Z axis
+		high.z = Math.Max(originalReferencePoint.z, currentOrientation.z);
+		low.z = Math.Min(originalReferencePoint.z, currentOrientation.z);
+
+		a.z = high.z - low.z;
+		b.z = 360 - high.z + low.z;
+		c.z = Math.Min(a.z, b.z);
+
+		if (c.z > boundaryOffset.z)
+			inBound = false;
+
+		return inBound;
+	}
+
+
+}
+
+class InvertedBenchPress
+{
+	public static InvertedBenchPress instance = null; 
+
+	public Vector3 refrenceOrientationLeft;
+	public Vector3 refrenceOrientationRight;
+
+	Vector3 bounds  = new Vector3(15.0f,15.0f,15.0f);
+
+	public int Repitition = 0;
+
+	enum GloveState
+	{
+		Awaiting,
+		ReadyToTransition
+	}
+
+	enum Stage
+	{
+		Exodus,
+		Return
+	}
+
+	Stage currentStage = Stage.Exodus;
+
+	GloveState leftState = GloveState.Awaiting;
+	GloveState rightState = GloveState.Awaiting;
+
+	public InvertedBenchPress(Vector3 oLeft, Vector3 oRight)
+	{
+		UpdateRefrenceOrienation (oLeft, oRight);
+
+	}
+
+	public static void Initilize(Vector3 oLeft, Vector3 oRight)
+	{
+		instance = new InvertedBenchPress (oLeft, oRight);
+	}
+
+	public static void Complete()
+	{
+		instance = null;
+	}
+
+	public void UpdateRefrenceOrienation (Vector3 oLeft, Vector3 oRight)
+	{
+		refrenceOrientationLeft = oLeft;
+		refrenceOrientationRight = oRight;
+	}
+
+
+	public void Update(Vector3 oLeft, Vector3 aLeft, Vector3 oRight, Vector3 aRight)
+	{
+		if (leftState == GloveState.Awaiting) {
+			leftState = DetermineTransition (refrenceOrientationLeft, oLeft, aLeft);
+		}
+
+		if (rightState == GloveState.Awaiting) {
+			rightState = DetermineTransition (refrenceOrientationRight, oRight, aRight);
+		}
+
+		if (!areWeInBounds (oLeft, refrenceOrientationLeft, bounds)) {
+			if (!areWeInBounds (oRight, refrenceOrientationRight, bounds)) {
+				Responder_Exercise.BeepBoth ();
+			} else {
+				Responder_Exercise.BeepLeft();
+			}
+		}
+		else if (!areWeInBounds (oRight, refrenceOrientationRight, bounds)) {
+			Responder_Exercise.BeepRight();
+		}
+
+		if (isReadyToTransition ()) {
+			currentStage = Transition ();
+		}
+
+
+	}
+
+	Stage Transition()
+	{
+
+		switch (currentStage) 
+		{
+		case Stage.Exodus:
+			rightState = GloveState.Awaiting;
+			leftState = GloveState.Awaiting;
+			return Stage.Return;
+
+		case Stage.Return:
+			Repitition++;
+			rightState = GloveState.Awaiting;
+			leftState = GloveState.Awaiting;
+			return Stage.Exodus;
+		}
+
+		return Stage.Exodus;
+
+
+	}
+
+	public bool isReadyToTransition()
+	{
+		return rightState == GloveState.ReadyToTransition && leftState == GloveState.ReadyToTransition;
+	}
+
+	GloveState DetermineTransition(Vector3 oRef, Vector3 o, Vector3 a)
+	{
+		switch (currentStage) 
+		{
+		case Stage.Exodus:
+			if (a.x < 0.8f)
+				return GloveState.ReadyToTransition;
+			break;
+		case Stage.Return:
+			if (a.x > -0.8f)
 				return GloveState.ReadyToTransition;
 			break;
 		}
