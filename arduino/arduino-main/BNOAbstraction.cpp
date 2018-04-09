@@ -1,5 +1,30 @@
 #include "BNOAbstraction.h"
 
+
+static xyz toEulerAngle(imu::Quaternion q)
+{
+  xyz temp;
+  // roll (x-axis rotation)
+  double sinr = +2.0 * (q.w() * q.x() + q.y() * q.z());
+  double cosr = +1.0 - 2.0 * (q.x() * q.x() + q.y() * q.y());
+  temp.x = atan2(sinr, cosr) *180/M_PI;
+
+  // pitch (y-axis rotation)
+  double sinp = +2.0 * (q.w() * q.y() - q.z() * q.x());
+  if (fabs(sinp) >= 1)
+    temp.y = copysign(M_PI / 2, sinp)*180/M_PI; // use 90 degrees if out of range
+  else
+    temp.y = asin(sinp)*180/M_PI;
+
+  // yaw (z-axis rotation)
+  double siny = +2.0 * (q.w() * q.z() + q.x() * q.y());
+  double cosy = +1.0 - 2.0 * (q.y() * q.y() + q.z() * q.z());  
+  temp.z = atan2(siny, cosy)*180/M_PI;
+
+  return temp;
+}
+
+
 void BNOAbstraction::bicepCurl(hpr orientation, xyz acceleration, uint32_t runTime)
 {
   bool makeNoise = true;
@@ -540,7 +565,7 @@ void BNOAbstraction::update()
       period = ((float) (ts1 - ts0))/1000.0f/100.0f;
 
       Serial.print("Period : ");
-      Serial.println(period);
+      Serial.println(ts1 - ts0);
 
       totalRunTime += (ts1-ts0);
       ts0=ts1;
@@ -548,36 +573,38 @@ void BNOAbstraction::update()
 //    Serial.print (iteration);
 //    Serial.print ("\t");
 
-    xyz temp;
-    imu::Vector<3> euler = bno.getVector(Adafruit_BNO055::VECTOR_EULER);
+//    imu::Quaternion q = bno.getQuat();
+   // q.normalize();
+    //float temp = q.x();  q.x() = -q.y();  q.y() = temp;
+ //   q.z() = -q.z();
+ //   xyz temp;
+   // float temp2 = q.x();  q.x() = -q.y();  q.y() = temp2;
+   // q.z() = -q.z();
+ //   imu::Vector<3> euler = q.toEuler();
 //
-   temp.x = euler.x();// +180.0f;
-//
-   temp.y = euler.y() +180.0f; 
-//
-    temp.z =euler.z() +180.0f;
-//
-   Serial.print(F("Orientation: "));
-  Serial.print( temp.x);  // heading, nose-right is positive, z-axis points up
-  Serial.print(F("\t\t\t"));
-  Serial.print(temp.y);  // roll, rightwing-up is positive, y-axis points forward
-  Serial.print(F("\t\t\t"));
-  Serial.print(temp.z);  // pitch, nose-down is positive, x-axis points right
-  Serial.println(F("\t\t\t"));
-//
-    orientationData = temp;
+//   Serial.print(F("Orientation: "));
+//  Serial.print( q.w());  // heading, nose-right is positive, z-axis points up
+//  Serial.print(F("\t\t\t"));
+//  Serial.print(q.x());  // roll, rightwing-up is positive, y-axis points forward
+//  Serial.print(F("\t\t\t"));
+//  Serial.print(q.y());  // pitch, nose-down is positive, x-axis points right
+//  Serial.print(F("\t\t\t"));
+//    Serial.print(q.z());  // pitch, nose-down is positive, x-axis points right
+//  Serial.println(F("\t\t\t"));
+//////
+//    orientationData = temp;
 
-  //calculateOrientation();
+  calculateOrientation();
   
   dataSample = bno.getVector(Adafruit_BNO055::VECTOR_LINEARACCEL);
   accelerationData.x = dataSample.x();
   accelerationData.y = dataSample.y();
   accelerationData.z = dataSample.z();
 
-  currentOrientation.h = event.orientation.x;
-  currentOrientation.p = event.orientation.y;
-  currentOrientation.r = event.orientation.z;
-  
+//  currentOrientation.h = event.orientation.x;
+//  currentOrientation.p = event.orientation.y;
+//  currentOrientation.r = event.orientation.z;
+//  
 //  int exercise = 1;
 //  switch(exercise)
 //  {
@@ -727,4 +754,5 @@ void BNOAbstraction::getAcceleration(xyz *acc)
   acc->y = accelerationData.y;
   acc->z = accelerationData.z;
 }
+
 
