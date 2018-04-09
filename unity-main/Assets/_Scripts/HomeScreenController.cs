@@ -10,6 +10,8 @@ public class HomeScreenController : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 
+//		File.Delete (Application.persistentDataPath + "/workoutTable.dat");
+
 		if (!File.Exists (Application.persistentDataPath + "/workoutTable.dat")) {
 			initExerciseData ();
 			Debug.Log ("The file has been created");
@@ -49,6 +51,16 @@ public class HomeScreenController : MonoBehaviour {
 		workoutDetailsList.Add ("10"); // rest timer
 		workoutDetailsList.Add ("6"); // goal number of reps
 		workoutList.workoutTable.Add("Bench Press", workoutDetailsList);
+
+		workoutDetailsList = new List<String> ();
+
+		// Adds Bench Press to the file.
+		workoutDetailsList.Add ("Inverted_Bench_Press"); // exercise name
+		workoutDetailsList.Add ("2"); // number of sets
+		workoutDetailsList.Add ("4"); // start timer
+		workoutDetailsList.Add ("8"); // rest timer
+		workoutDetailsList.Add ("5"); // goal number of reps
+		workoutList.workoutTable.Add("Inverted Bench Press", workoutDetailsList);
 
 		// Saves the file.
 		binaryFormatter.Serialize (file, workoutList);
