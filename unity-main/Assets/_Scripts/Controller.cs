@@ -37,7 +37,7 @@ public class Controller : MonoBehaviour
 
 	public bool ModifyLeft;
 
-	bool reading = false;
+	public bool reading = false;
 
 	enum States
 	{
@@ -484,7 +484,7 @@ public class Controller : MonoBehaviour
 						BluetoothLEHardwareInterface.ReadCharacteristic (_deviceAddressLeft, ServiceUUID, ReadCharacteristic, ( charUID, bits) => {
 							ReactToInput( bits,_deviceAddressLeft);
 							if(reading)
-								SetState (States.ReadBoth, 0.01f);
+								SetState (States.ReadBoth, 0.001f);
 						});
 					});
 					//SetState (States.ReadBoth, 0.02f);
@@ -513,6 +513,7 @@ public class Controller : MonoBehaviour
 				BluetoothLEHardwareInterface.StopScan ();
 				SetState(States.Connect, 0.1f);
 			}
+
 		}
 	}
 

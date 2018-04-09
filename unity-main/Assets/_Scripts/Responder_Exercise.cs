@@ -652,11 +652,11 @@ class InvertedBenchPress
 		switch (currentStage) 
 		{
 		case Stage.Exodus:
-			if (a.x < 0.8f)
+			if (a.x < -0.8f)
 				return GloveState.ReadyToTransition;
 			break;
 		case Stage.Return:
-			if (a.x > -0.8f)
+			if (a.x > 0.8f)
 				return GloveState.ReadyToTransition;
 			break;
 		}

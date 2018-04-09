@@ -539,32 +539,35 @@ void BNOAbstraction::update()
 
       period = ((float) (ts1 - ts0))/1000.0f/100.0f;
 
+      Serial.print("Period : ");
+      Serial.println(period);
+
       totalRunTime += (ts1-ts0);
       ts0=ts1;
     }
 //    Serial.print (iteration);
 //    Serial.print ("\t");
 
-//  xyz temp;
-//  imu::Vector<3> euler = bno.getVector(Adafruit_BNO055::VECTOR_GYROSCOPE);
+    xyz temp;
+    imu::Vector<3> euler = bno.getVector(Adafruit_BNO055::VECTOR_EULER);
 //
-//  temp.x = euler.x();// +180.0f;
+   temp.x = euler.x();// +180.0f;
 //
-//  temp.y = euler.y() +180.0f; 
+   temp.y = euler.y() +180.0f; 
 //
-//  temp.z =euler.z() +180.0f;
+    temp.z =euler.z() +180.0f;
 //
-//   Serial.print(F("Orientation: "));
-//  Serial.print( euler.x());  // heading, nose-right is positive, z-axis points up
-//  Serial.print(F("\t\t\t"));
-//  Serial.print(euler.y());  // roll, rightwing-up is positive, y-axis points forward
-//  Serial.print(F("\t\t\t"));
-//  Serial.print(euler.z());  // pitch, nose-down is positive, x-axis points right
-//  Serial.println(F("\t\t\t"));
+   Serial.print(F("Orientation: "));
+  Serial.print( temp.x);  // heading, nose-right is positive, z-axis points up
+  Serial.print(F("\t\t\t"));
+  Serial.print(temp.y);  // roll, rightwing-up is positive, y-axis points forward
+  Serial.print(F("\t\t\t"));
+  Serial.print(temp.z);  // pitch, nose-down is positive, x-axis points right
+  Serial.println(F("\t\t\t"));
 //
-//  orientationData = temp;
+    orientationData = temp;
 
-  calculateOrientation();
+  //calculateOrientation();
   
   dataSample = bno.getVector(Adafruit_BNO055::VECTOR_LINEARACCEL);
   accelerationData.x = dataSample.x();
@@ -597,7 +600,7 @@ void BNOAbstraction::update()
 bool BNOAbstraction::begin()
 {
   /* Initialize the sensor */
-  if (!bno.begin())//Adafruit_BNO055::OPERATION_MODE_ACCGYRO))
+  if (!bno.begin(Adafruit_BNO055::OPERATION_MODE_IMUPLUS ))//Adafruit_BNO055::OPERATION_MODE_ACCGYRO))
   {
       /* There was a problem detecting the BNO055 ... check your connections */
       Serial.print("Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!");

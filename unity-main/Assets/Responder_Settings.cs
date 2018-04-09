@@ -57,6 +57,8 @@ public class Responder_Settings : MonoBehaviour {
 		currentRightStatus = controller.ConnectedRight;
 		UpdateHandStatus (Hand.Right, currentRightStatus);
 
+		controller.reading = false;
+
 	}
 	
 	// Update is called once per frame
