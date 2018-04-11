@@ -39,6 +39,8 @@ public class Responder_Exercise : MonoBehaviour {
 	public Text currentStageText;
 	public Text exerciseNameLabel;
 
+	public Text exerciseNameTest;
+
 	// Timer boolean flags. 
 	private bool increaseExerciseTimer = false;
 	private bool decreasestartTimer = false;
@@ -69,7 +71,7 @@ public class Responder_Exercise : MonoBehaviour {
 		Inverted_Bench_Press
 	}
 
-	Exercise Routine = Exercise.Bicep_Curl;
+	Exercise Routine = Exercise.Bench_Press;
 
 	Hand currentHand;
 
@@ -110,6 +112,13 @@ public class Responder_Exercise : MonoBehaviour {
 
 		exerciseNameEnumValue = ((List<string>)workoutHistory.workoutTable[exerciseName])[0];
 
+		if(exerciseNameEnumValue.Equals(Exercise.Bench_Press.ToString()))
+			Routine = Exercise.Bench_Press;
+		else if(exerciseNameEnumValue.Equals(Exercise.Inverted_Bench_Press.ToString()))
+			Routine = Exercise.Inverted_Bench_Press;
+		else if(exerciseNameEnumValue.Equals(Exercise.Bicep_Curl.ToString()))
+			Routine = Exercise.Bicep_Curl;
+
 		// Sets the text fields to the stored values.
 		numberOfSetsField.text = ((List<string>)workoutHistory.workoutTable[exerciseName])[1];
 		startTimerField.text = ((List<string>)workoutHistory.workoutTable[exerciseName])[2];
@@ -119,6 +128,8 @@ public class Responder_Exercise : MonoBehaviour {
 		// Parses the start time entered by the user to a float and sets the start timer
 		startTimerVal = float.Parse (startTimerField.text);
 		restTimerVal = float.Parse (restTimerField.text);
+
+		exerciseNameTest.text = Routine.ToString ();
 
 	}
 
@@ -742,8 +753,8 @@ class BicepCurl
 		Right
 	}
 
-	Vector3 lowerBoundry = new Vector3 (30, 150, 20);
-	Vector3 upperBoundry = new Vector3 (60, 20, 20);
+	Vector3 lowerBoundry = new Vector3 (35, 150, 10);
+	Vector3 upperBoundry = new Vector3 (20, 20, 40);
 
 	Stage currentStage = Stage.Exodus;
 
@@ -1014,7 +1025,7 @@ class BicepCurl
 		{
 			return (angle <upper) && (angle > lower);
 		}else {
-			return ((angle <360) && (angle > lower) || (angle > 0) && (angle < upper));
+			return ((angle <= 360) && (angle > lower) || (angle >= 0) && (angle < upper));
 		}
 	}
 
