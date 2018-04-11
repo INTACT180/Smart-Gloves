@@ -15,7 +15,7 @@ public class ViewExerciseDetails : MonoBehaviour {
 	public InputField goalRepsField;
 
 	private bool validInput = true;
-
+	 
 	public Text debugText;
 
 	static public string exerciseName;

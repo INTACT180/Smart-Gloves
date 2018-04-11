@@ -42,6 +42,7 @@ public class Responder_Exercise : MonoBehaviour {
 	// Timer boolean flags. 
 	private bool increaseExerciseTimer = false;
 	private bool decreasestartTimer = false;
+	private bool repsChanged = false;
 
 	// Timer values.
 	private float startTimerVal = 0;
@@ -166,7 +167,15 @@ public class Responder_Exercise : MonoBehaviour {
 
 			int currentFinishedReps = GetReps ();
 
-			currentRepField.text = currentFinishedReps.ToString ();
+			// When the number of reps needs to be updated, currentFinishedReps will be greater that currentRepField.
+			// The total number of reps should also be updated.
+			if (currentFinishedReps >= int.Parse (currentRepField.text)) {
+				int currentTotalRepNumber = int.Parse (totalNumberRepField.text);
+				totalNumberRepField.text = (++currentTotalRepNumber).ToString ();
+				currentRepField.text = currentFinishedReps.ToString ();
+			}
+				
+//			currentRepField.text = currentFinishedReps.ToString ();
 
 //			int totalNumReps = int.Parse (totalNumberRepField.text);
 //			totalNumberRepField.text = (++totalNumReps).ToString ();
