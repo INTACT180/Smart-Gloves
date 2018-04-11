@@ -3,20 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class FunctionTestScript : MonoBehaviour {
+	public Vector3 currentO = new Vector3 (1, 1, 1);
 
 	// Use this for initialization
 	void Start () {
 		
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
 
-		Vector3 currentO = new Vector3 (1, 1, 1);
 
-		Vector3 refO = new Vector3 (350, 350, 350);
+		Vector3 refO = new Vector3 (0, 0, 0);
 
-		Vector3 bounds = new Vector3 (20, 20, 20);
+		Vector3 bounds = new Vector3 (20, 150, 20);
 
 		areInBoundsCustom (currentO, refO, bounds, bounds);
 
@@ -49,15 +49,15 @@ public class FunctionTestScript : MonoBehaviour {
 
 	public static bool isAngleBetween(float upper, float lower, float angle)
 	{
-		print ("upper " + upper + " lower " + lower + " angle " + angle);
+		//print ("upper " + upper + " lower " + lower + " angle " + angle);
 		if(upper > lower)
 		{
-			print ("here");
+			//print ("here");
 			return (angle <upper) && (angle > lower);
 		}else {
-			print ("here 2");
-			print ("comp one  " + ((angle <360) && (angle > lower)).ToString() + " comp2 " + ((angle > 0) && (angle < upper)).ToString() );
-			print ("comp three " + ((angle < 360) && (angle > lower) || (angle > 0) && (angle < upper)).ToString());
+			//print ("here 2");
+			//print ("comp one  " + ((angle <360) && (angle > lower)).ToString() + " comp2 " + ((angle > 0) && (angle < upper)).ToString() );
+			//print ("comp three " + ((angle < 360) && (angle > lower) || (angle > 0) && (angle < upper)).ToString());
 			return ((angle <360) && (angle > lower) || (angle > 0) && (angle < upper));
 		}
 	}

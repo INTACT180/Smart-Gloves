@@ -762,8 +762,8 @@ class BicepCurl
 		Right
 	}
 
-	Vector3 lowerBoundry = new Vector3 (35, 150, 10);
-	Vector3 upperBoundry = new Vector3 (20, 20, 40);
+	Vector3 lowerBoundry = new Vector3 (22, 150, 35);
+	Vector3 upperBoundry = new Vector3 (22, 10, 35);
 
 	Stage currentStage = Stage.Exodus;
 

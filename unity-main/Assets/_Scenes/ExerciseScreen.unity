@@ -1730,6 +1730,7 @@ MonoBehaviour:
   gameTimerText: {fileID: 1502129166}
   currentStageText: {fileID: 1279577810}
   exerciseNameLabel: {fileID: 1502129166}
+  exerciseNameTest: {fileID: 1887237496}
 --- !u!4 &692578040
 Transform:
   m_ObjectHideFlags: 0
