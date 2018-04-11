@@ -765,8 +765,8 @@ class BicepCurl
 		Right
 	}
 
-	Vector3 lowerBoundry = new Vector3 (22, 150, 35);
-	Vector3 upperBoundry = new Vector3 (22, 10, 35);
+	Vector3 lowerBoundry = new Vector3 (41, 145, 30);
+	Vector3 upperBoundry = new Vector3 (41, 10, 30);
 
 	Stage currentStage = Stage.Exodus;
 
@@ -806,14 +806,14 @@ class BicepCurl
 			rightState = DetermineTransition (refrenceOrientationRight, oRight, aRight, Hand.Right);
 		}
 
-		if (!areInBoundsCustom (oLeft, refrenceOrientationLeft, lowerBoundry,upperBoundry)) {
-			if (!areInBoundsCustom (oRight, refrenceOrientationRight, lowerBoundry,upperBoundry)) {
+		if (!areInBoundsCustom2 (oLeft, refrenceOrientationLeft, lowerBoundry,upperBoundry)) {
+			if (!areInBoundsCustom2 (oRight, refrenceOrientationRight, lowerBoundry,upperBoundry)) {
 				Responder_Exercise.BeepBoth ();
 			} else {
 				Responder_Exercise.BeepLeft();
 			}
 		}
-		else if (!areInBoundsCustom (oRight, refrenceOrientationRight, lowerBoundry,upperBoundry)) {
+		else if (!areInBoundsCustom2 (oRight, refrenceOrientationRight, lowerBoundry,upperBoundry)) {
 			Responder_Exercise.BeepRight();
 		}
 
@@ -1028,6 +1028,26 @@ class BicepCurl
 		if (!isAngleBetween(upper.z, lower.z, currentOrientation.z))
 			inBound = false;
 
+		return inBound;
+	}
+
+	public static bool areInBoundsCustom2(Vector3 currentOrientation, Vector3 originalReferencePoint, Vector3 lowerBounds, Vector3 upperBounds)
+	{
+		bool inBound = true;
+
+		Vector3 upper = correctForDegrees(originalReferencePoint + upperBounds);
+		Vector3 lower = correctForDegrees(originalReferencePoint - lowerBounds);
+
+		if (!isAngleBetween(upper.x, lower.x, currentOrientation.x))
+			inBound = false;
+		if (!isAngleBetween(upper.y, lower.y, currentOrientation.y))
+			inBound = false;
+		if (!isAngleBetween(upper.z, lower.z, currentOrientation.z))
+			inBound = false;
+
+		if (!inBound)
+			Debug.Log ("scoot currentOrientation: " + currentOrientation + " originalRef: " + originalReferencePoint + " lower: " + lower + " upper: " + upper + " lower bounds" + lowerBounds + " upperBounds: " + upperBounds);
+		
 		return inBound;
 	}
 
