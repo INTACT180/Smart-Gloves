@@ -130,7 +130,7 @@ public class Responder_Exercise : MonoBehaviour {
 		startTimerVal = float.Parse (startTimerField.text);
 		restTimerVal = float.Parse (restTimerField.text);
 
-		exerciseNameTest.text = Routine.ToString ();
+//		exerciseNameTest.text = Routine.ToString ();
 
 	}
 
@@ -161,7 +161,7 @@ public class Responder_Exercise : MonoBehaviour {
 			if (startTimerVal <= 0) {
 //				decreasestartTimer = false;
 				currentStageText.text = "Waiting for User to Finish Exercise";
-				currentStageText.color = Color.red;
+//				currentStageText.color = Color.red;
 				startTimerVal = float.Parse (startTimerField.text);
 				currentState = States.InProgress;
 
@@ -172,21 +172,25 @@ public class Responder_Exercise : MonoBehaviour {
 		case States.InProgress:
 			//run exercise itteration for each glove
 			//
-//			Debug.Log("running state IN PROGRESS");
+			Debug.Log ("running state IN PROGRESS");
+
+
 
 			ExerciseUpdate ();
 
 			int currentFinishedReps = GetReps ();
 
-			// When the number of reps needs to be updated, currentFinishedReps will be greater that currentRepField.
-			// The total number of reps should also be updated.
-			if (currentFinishedReps >= int.Parse (currentRepField.text)) {
-				int currentTotalRepNumber = int.Parse (totalNumberRepField.text);
-				totalNumberRepField.text = (++currentTotalRepNumber).ToString ();
-				currentRepField.text = currentFinishedReps.ToString ();
-			}
+//			int num = int.Parse (currentRepField.text);
+//
+//			// When the number of reps needs to be updated, currentFinishedReps will be greater that currentRepField.
+//			// The total number of reps should also be updated.
+//			if (currentFinishedReps >= num) {
+//				int currentTotalRepNumber = int.Parse (totalNumberRepField.text);
+//				totalNumberRepField.text = (++currentTotalRepNumber).ToString ();
+//				currentRepField.text = currentFinishedReps.ToString ();
+//			}
 				
-//			currentRepField.text = currentFinishedReps.ToString ();
+			currentRepField.text = currentFinishedReps.ToString ();
 
 //			int totalNumReps = int.Parse (totalNumberRepField.text);
 //			totalNumberRepField.text = (++totalNumReps).ToString ();
@@ -201,7 +205,7 @@ public class Responder_Exercise : MonoBehaviour {
 
 				currentSetField.text = (++currentSetNumber).ToString ();
 					
-				if (currentSetField.text.Equals (numberOfSetsField)) {
+				if (currentSetField.text.Equals (numberOfSetsField.text)) {
 					currentState = States.Finish;
 				} else {
 					currentState = States.Rest;
@@ -237,7 +241,7 @@ public class Responder_Exercise : MonoBehaviour {
 			// The rest timer completes.
 			if (restTimerVal <= 0) {
 				currentStageText.text = "Counting Down Start Timer";
-				currentStageText.color = Color.red;
+//				currentStageText.color = Color.red;
 
 				currentState = States.SetUp;
 				excerciseTimer = 0f;
@@ -355,7 +359,6 @@ public class Responder_Exercise : MonoBehaviour {
 			actionButton.GetComponentInChildren<Text> ().text = "Stop Set";
 			currentStageText.text = "Counting Down Start Timer";
 			currentSetField.text = "1";
-			totalNumberRepField.text = "0";
 			currentState = States.SetUp;	
 		} else if (actionButton.GetComponentInChildren<Text> ().text.ToLower ().Equals ("stop set")) {
 
