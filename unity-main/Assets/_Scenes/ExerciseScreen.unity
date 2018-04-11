@@ -2681,6 +2681,7 @@ MonoBehaviour:
   ConnectedLeft: 0
   ConnectedRight: 0
   ModifyLeft: 0
+  reading: 0
 --- !u!4 &1202011968
 Transform:
   m_ObjectHideFlags: 0
@@ -4201,7 +4202,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.44705883, g: 0.44705883, b: 0.44705883, a: 0.654902}
+  m_BackGroundColor: {r: 0, g: 0.4246958, b: 0.9191176, a: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0

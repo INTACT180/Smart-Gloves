@@ -206,7 +206,7 @@ void bnoThread()
 {
   bno.update();
 
-   delay(9);
+   delay(8);
 }
 
 /**
