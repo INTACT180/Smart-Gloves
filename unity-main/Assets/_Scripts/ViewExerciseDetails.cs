@@ -49,7 +49,7 @@ public class ViewExerciseDetails : MonoBehaviour {
 		int number;
 
 		// Checks if the inputs are numbers and not 
-		if (!int.TryParse (numberOfSetsField.text, out number)) {
+		if (!int.TryParse (numberOfSetsField.text, out number) || int.Parse(numberOfSetsField.text) <= 0 ) {
 			validInput = false;
 			numberOfSetsField.transform.FindChild ("Text").GetComponent<Text> ().color = Color.red;
 		} else if (numberOfSetsField.transform.FindChild ("Text").GetComponent<Text> ().color.Equals(Color.red))  {
@@ -57,7 +57,7 @@ public class ViewExerciseDetails : MonoBehaviour {
 			numberOfSetsField.transform.FindChild ("Text").GetComponent<Text> ().color = Color.black;
 		}
 
-		if (!int.TryParse (startTimerField.text, out number)) {
+		if (!int.TryParse (startTimerField.text, out number) || int.Parse(startTimerField.text) <= 0) {
 			validInput = false;
 			startTimerField.transform.FindChild ("Text").GetComponent<Text> ().color = Color.red;
 		} else if (startTimerField.transform.FindChild ("Text").GetComponent<Text> ().color.Equals(Color.red))  {
@@ -65,7 +65,7 @@ public class ViewExerciseDetails : MonoBehaviour {
 			startTimerField.transform.FindChild ("Text").GetComponent<Text> ().color = Color.black;
 		}
 
-		if (!int.TryParse (restTimerField.text, out number)) {
+		if (!int.TryParse (restTimerField.text, out number) || int.Parse(restTimerField.text) <= 0) {
 			validInput = false;
 			restTimerField.transform.FindChild ("Text").GetComponent<Text> ().color = Color.red;
 		} else if (restTimerField.transform.FindChild ("Text").GetComponent<Text> ().color.Equals(Color.red))  {
@@ -73,7 +73,7 @@ public class ViewExerciseDetails : MonoBehaviour {
 			restTimerField.transform.FindChild ("Text").GetComponent<Text> ().color = Color.black;
 		}
 
-		if (!int.TryParse (goalRepsField.text, out number)) {
+		if (!int.TryParse (goalRepsField.text, out number) || int.Parse(goalRepsField.text) <= 0) {
 			validInput = false;
 			goalRepsField.transform.FindChild ("Text").GetComponent<Text> ().color = Color.red;
 		} else if (goalRepsField.transform.FindChild ("Text").GetComponent<Text> ().color.Equals(Color.red))  {
@@ -97,7 +97,7 @@ public class ViewExerciseDetails : MonoBehaviour {
 			debugText.text = "Inserted into the workout table file.";
 			debugText.GetComponent<Text>().color = Color.green;
 		} else {
-			debugText.text = "Please ensure that number of sets, start timer, rest timer, and goal reps are numbers.";
+			debugText.text = "Please ensure that number of sets, start timer, rest timer, and goal reps are positive numbers.";
 			debugText.color = Color.red;
 		}
 
