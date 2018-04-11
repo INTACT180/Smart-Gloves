@@ -158,11 +158,15 @@ public class Responder_Exercise : MonoBehaviour {
 		
 			startTimerVal -= Time.deltaTime;
 			gameTimerText.text = startTimerVal.ToString ("f0");
+
 			if (startTimerVal <= 0) {
 //				decreasestartTimer = false;
 				currentStageText.text = "Waiting for User to Finish Exercise";
 //				currentStageText.color = Color.red;
 				startTimerVal = float.Parse (startTimerField.text);
+
+//				int currentSetNumber = int.Parse (currentSetField.text);
+//				currentSetField.text = "1";
 				currentState = States.InProgress;
 
 				FinishExercise ();
@@ -172,7 +176,7 @@ public class Responder_Exercise : MonoBehaviour {
 		case States.InProgress:
 			//run exercise itteration for each glove
 			//
-			Debug.Log ("running state IN PROGRESS");
+//			Debug.Log ("running state IN PROGRESS");
 
 
 
@@ -196,14 +200,13 @@ public class Responder_Exercise : MonoBehaviour {
 //			totalNumberRepField.text = (++totalNumReps).ToString ();
 
 			//update current rep text
-			if(currentFinishedReps >= int.Parse(goalRepsField.text)) //check if reps >= number
-			{
+			if (currentFinishedReps >= int.Parse (goalRepsField.text)) { //check if reps >= number
 
 //				FinishExercise ();
 
-				int currentSetNumber = int.Parse (currentSetField.text);
-
-				currentSetField.text = (++currentSetNumber).ToString ();
+//				int currentSetNumber = int.Parse (currentSetField.text);
+//
+//				currentSetField.text = (++currentSetNumber).ToString ();
 					
 				if (currentSetField.text.Equals (numberOfSetsField.text)) {
 					currentState = States.Finish;
@@ -215,7 +218,7 @@ public class Responder_Exercise : MonoBehaviour {
 				//if sets >= total -> finished
 				//transition -> rest
 				
-			}		
+			}
 			//Are reps finished? and are sets done? -> Finished state
 			//Are reps finished? -> Rest State ++Sets Set Rest Count down
 			//continue in progress...
@@ -233,6 +236,7 @@ public class Responder_Exercise : MonoBehaviour {
 		case States.Rest:
 			// Check if rest timer expired... if yes goto -> Inprogress..
 		
+			currentStageText.text = "Counting Down Rest Timer";
 
 			// Decreses the rest timer.
 			restTimerVal-= Time.deltaTime;
@@ -243,6 +247,10 @@ public class Responder_Exercise : MonoBehaviour {
 				currentStageText.text = "Counting Down Start Timer";
 //				currentStageText.color = Color.red;
 
+				int currentSetNumber = int.Parse (currentSetField.text);
+
+				currentSetField.text = (++currentSetNumber).ToString ();
+
 				currentState = States.SetUp;
 				excerciseTimer = 0f;
 				restTimerVal = float.Parse (restTimerField.text);
@@ -251,6 +259,12 @@ public class Responder_Exercise : MonoBehaviour {
 			break;
 
 		case States.Finish:
+
+			actionButton.GetComponentInChildren<Text> ().text = "Start Exercise";
+			currentStageText.text = "Exercise Has Been Completed";
+			currentState = States.Finish;
+			gameTimerText.text = "00:00";
+			excerciseTimer = 0f;
 
 			//Play audio wrap up exercise // show stats?
 			break;
@@ -359,6 +373,7 @@ public class Responder_Exercise : MonoBehaviour {
 			actionButton.GetComponentInChildren<Text> ().text = "Stop Set";
 			currentStageText.text = "Counting Down Start Timer";
 			currentSetField.text = "1";
+			gameTimerText.text = "00:00";
 			currentState = States.SetUp;	
 		} else if (actionButton.GetComponentInChildren<Text> ().text.ToLower ().Equals ("stop set")) {
 
