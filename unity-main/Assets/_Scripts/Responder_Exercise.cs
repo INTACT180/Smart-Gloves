@@ -23,6 +23,7 @@ public class Responder_Exercise : MonoBehaviour {
 	public AudioClip yaySound;
 	public AudioClip _RepComplete;
 	public AudioClip SetComplete;
+	public AudioClip RestComplete;
 
 
 
@@ -264,8 +265,11 @@ public class Responder_Exercise : MonoBehaviour {
 
 			// The rest timer completes.
 			if (restTimerVal <= 0) {
+				
 				currentStageText.text = "Counting Down Start Timer";
 //				currentStageText.color = Color.red;
+
+				AudioSource.PlayClipAtPoint(RestComplete,Camera.main.transform.position);
 
 				int currentSetNumber = int.Parse (currentSetField.text);
 

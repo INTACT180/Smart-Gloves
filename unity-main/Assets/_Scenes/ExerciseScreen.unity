@@ -1513,6 +1513,7 @@ MonoBehaviour:
   yaySound: {fileID: 8300000, guid: 9793f7d1325084ea5b893f5039afd287, type: 3}
   _RepComplete: {fileID: 8300000, guid: f23ce434c78e84f6390e88405bc853ce, type: 3}
   SetComplete: {fileID: 8300000, guid: 246aba8cd3b2540c2a62de5a359b7a2a, type: 3}
+  RestComplete: {fileID: 8300000, guid: 2ec77e2878799476291fb866e1ff9ecd, type: 3}
   exerciseNameEnumValue: 
   sceneTitle: {fileID: 1263072203}
   actionButton: {fileID: 1792757934}
