@@ -22,6 +22,7 @@ public class Responder_Exercise : MonoBehaviour {
 	public static AudioClip RepComplete;
 	public AudioClip yaySound;
 	public AudioClip _RepComplete;
+	public AudioClip SetComplete;
 
 
 
@@ -229,6 +230,7 @@ public class Responder_Exercise : MonoBehaviour {
 					currentState = States.Finish;
 					AudioSource.PlayClipAtPoint(yaySound,Camera.main.transform.position);
 				} else {
+					AudioSource.PlayClipAtPoint(SetComplete,Camera.main.transform.position);
 					currentState = States.Rest;
 				}
 
