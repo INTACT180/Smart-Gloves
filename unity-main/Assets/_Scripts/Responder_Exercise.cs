@@ -18,13 +18,20 @@ public class Responder_Exercise : MonoBehaviour {
 
 	static public string exerciseName;
 
+	public AudioClip halo;
+	public static AudioClip RepComplete;
+	public AudioClip yaySound;
+	public AudioClip _RepComplete;
+
+
+
 	// string to be used to get what the current exercise is.
 	public string exerciseNameEnumValue;
 
 	public Button sceneTitle;
 	public Button actionButton;
 
-	// Goal Stats input fields.
+	// Goal Stats input fields.   
 	public InputField numberOfSetsField;
 	public InputField startTimerField;
 	public InputField restTimerField;
@@ -50,6 +57,8 @@ public class Responder_Exercise : MonoBehaviour {
 	private float startTimerVal = 0;
 	private float restTimerVal = 0;
 	private float excerciseTimer = 0f;
+
+	private bool haloPlayed = false;
 
 
 
@@ -84,6 +93,8 @@ public class Responder_Exercise : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+
+		RepComplete = _RepComplete;
 
 		GameObject controllerObj = GameObject.Find ("Controller");
 
@@ -159,7 +170,13 @@ public class Responder_Exercise : MonoBehaviour {
 			startTimerVal -= Time.deltaTime;
 			gameTimerText.text = startTimerVal.ToString ("f0");
 
+			if (!haloPlayed && startTimerVal < 3.75 && startTimerVal >= 3) {
+				AudioSource.PlayClipAtPoint(halo,Camera.main.transform.position);
+				haloPlayed = true;
+			}
+
 			if (startTimerVal <= 0) {
+				haloPlayed = false;
 //				decreasestartTimer = false;
 				currentStageText.text = "Waiting for User to Finish Exercise";
 //				currentStageText.color = Color.red;
@@ -210,6 +227,7 @@ public class Responder_Exercise : MonoBehaviour {
 					
 				if (currentSetField.text.Equals (numberOfSetsField.text)) {
 					currentState = States.Finish;
+					AudioSource.PlayClipAtPoint(yaySound,Camera.main.transform.position);
 				} else {
 					currentState = States.Rest;
 				}
@@ -502,6 +520,7 @@ class BenchPress
 
 		case Stage.Return:
 			Repitition++;
+			AudioSource.PlayClipAtPoint(Responder_Exercise.RepComplete,Camera.main.transform.position);
 			rightState = GloveState.Awaiting;
 			leftState = GloveState.Awaiting;
 			return Stage.Exodus;
@@ -670,6 +689,7 @@ class InvertedBenchPress
 
 		case Stage.Return:
 			Repitition++;
+			AudioSource.PlayClipAtPoint(Responder_Exercise.RepComplete,Camera.main.transform.position);
 			rightState = GloveState.Awaiting;
 			leftState = GloveState.Awaiting;
 			return Stage.Exodus;
@@ -852,6 +872,7 @@ class BicepCurl
 
 		case Stage.Return:
 			Repitition++;
+			AudioSource.PlayClipAtPoint(Responder_Exercise.RepComplete,Camera.main.transform.position);
 			rightState = GloveState.Awaiting;
 			leftState = GloveState.Awaiting;
 			resetFlags ();
