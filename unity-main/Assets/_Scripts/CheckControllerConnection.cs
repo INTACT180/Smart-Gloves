@@ -29,6 +29,8 @@ public class CheckControllerConnection : MonoBehaviour {
 
 		controller = controllerObj.GetComponent<Controller> ();
 
+		controller.reading = false;
+
 		currentLeftStatus = controller.ConnectedLeft;
 		UpdateHandStatus (Hand.Left, currentLeftStatus);
 
