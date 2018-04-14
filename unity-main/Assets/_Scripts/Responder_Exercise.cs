@@ -264,8 +264,11 @@ public class Responder_Exercise : MonoBehaviour {
 			gameTimerText.text = restTimerVal.ToString ("f0");
 
 			// The rest timer completes.
-			if (restTimerVal <= 0) {
-				
+			if (restTimerVal <= 0 && int.Parse(currentSetField.text) < int.Parse(numberOfSetsField.text)) {
+
+				Debug.Log (int.Parse (currentSetField.text));
+				Debug.Log (int.Parse(numberOfSetsField.text));
+
 				currentStageText.text = "Counting Down Start Timer";
 //				currentStageText.color = Color.red;
 
@@ -278,6 +281,8 @@ public class Responder_Exercise : MonoBehaviour {
 				currentState = States.SetUp;
 				excerciseTimer = 0f;
 				restTimerVal = float.Parse (restTimerField.text);
+			} else if (restTimerVal <= 0 && int.Parse(currentSetField.text) == int.Parse(numberOfSetsField.text)) {
+				currentState = States.Finish;
 			}
 
 			break;
@@ -401,21 +406,23 @@ public class Responder_Exercise : MonoBehaviour {
 			currentState = States.SetUp;	
 		} else if (actionButton.GetComponentInChildren<Text> ().text.ToLower ().Equals ("stop set")) {
 
-			// Checks if the current number of sets and the goal number of sets match.
-			if (!currentSetField.text.Equals (numberOfSetsField.text)) {
-				actionButton.GetComponentInChildren<Text> ().text = "Stop Set";
-				currentStageText.text = "Counting Down Rest Timer";
+			if (!currentState.Equals (States.Rest) || !currentState.Equals (States.SetUp)) {
+				// Checks if the current number of sets and the goal number of sets match.
+				if (!currentSetField.text.Equals (numberOfSetsField.text)) {
+					actionButton.GetComponentInChildren<Text> ().text = "Stop Set";
+					currentStageText.text = "Counting Down Rest Timer";
 
-				// Updates the current set number.
-				int currentSet = int.Parse (currentSetField.text);
-				currentSet += 1;
-				currentSetField.text = currentSet.ToString ();
-				currentState = States.Rest;
-			} else {
-				actionButton.GetComponentInChildren<Text> ().text = "Start Exercise";
-				currentStageText.text = "Exercise Has Been Completed";
-				currentState = States.Finish;
-				gameTimerText.text = "00:00";
+					// Updates the current set number.
+					int currentSet = int.Parse (currentSetField.text);
+					currentSet += 1;
+					currentSetField.text = currentSet.ToString ();
+					currentState = States.Rest;
+				} else {
+					actionButton.GetComponentInChildren<Text> ().text = "Start Exercise";
+					currentStageText.text = "Exercise Has Been Completed";
+					currentState = States.Finish;
+					gameTimerText.text = "00:00";
+				}
 			}
 		}
 	}
