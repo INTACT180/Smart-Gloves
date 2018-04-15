@@ -44,6 +44,15 @@ public class HomeScreenController : MonoBehaviour {
 
 		workoutDetailsList = new List<String> ();
 
+		// Adds the Bicep_Curl to the file.
+		workoutDetailsList.Add ("Bicep_Curl"); // exercise name
+		workoutDetailsList.Add ("3"); // number of sets
+		workoutDetailsList.Add ("10"); // start timer
+		workoutDetailsList.Add ("15"); // rest timer
+		workoutDetailsList.Add ("5"); // goal number of reps
+		workoutList.workoutTable.Add("Wrist Curl", workoutDetailsList);
+
+		workoutDetailsList = new List<String> ();
 		// Adds Bench Press to the file.
 		workoutDetailsList.Add ("Bench_Press"); // exercise name
 		workoutDetailsList.Add ("3"); // number of sets
@@ -55,12 +64,32 @@ public class HomeScreenController : MonoBehaviour {
 		workoutDetailsList = new List<String> ();
 
 		// Adds Bench Press to the file.
+		workoutDetailsList.Add ("Bench_Press"); // exercise name
+		workoutDetailsList.Add ("3"); // number of sets
+		workoutDetailsList.Add ("5"); // start timer
+		workoutDetailsList.Add ("10"); // rest timer
+		workoutDetailsList.Add ("6"); // goal number of reps
+		workoutList.workoutTable.Add("Bent Over Rows", workoutDetailsList);
+
+		workoutDetailsList = new List<String> ();
+
+		// Adds Bench Press to the file.
+		workoutDetailsList.Add ("Bench_Press"); // exercise name
+		workoutDetailsList.Add ("3"); // number of sets
+		workoutDetailsList.Add ("5"); // start timer
+		workoutDetailsList.Add ("10"); // rest timer
+		workoutDetailsList.Add ("6"); // goal number of reps
+		workoutList.workoutTable.Add("Squats", workoutDetailsList);
+
+		workoutDetailsList = new List<String> ();
+
+		// Adds Bench Press to the file.
 		workoutDetailsList.Add ("Inverted_Bench_Press"); // exercise name
 		workoutDetailsList.Add ("2"); // number of sets
 		workoutDetailsList.Add ("4"); // start timer
 		workoutDetailsList.Add ("8"); // rest timer
 		workoutDetailsList.Add ("5"); // goal number of reps
-		workoutList.workoutTable.Add("Inverted Bench Press", workoutDetailsList);
+		workoutList.workoutTable.Add("Military Press", workoutDetailsList);
 
 		// Saves the file.
 		binaryFormatter.Serialize (file, workoutList);
