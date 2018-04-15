@@ -74,7 +74,7 @@ public class CentralScript : MonoBehaviour
 
 				if (advertisingInfo != null)
 					BluetoothLEHardwareInterface.Log (string.Format ("Device: {0} RSSI: {1} Data Length: {2} Bytes: {3}", name, rssi, advertisingInfo.Length, BytesToString (advertisingInfo)));
-			});
+			},false,false);
 
 			TextScanButton.text = "Stop Scan";
 			_scanning = true;

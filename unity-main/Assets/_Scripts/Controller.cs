@@ -540,7 +540,7 @@ public class Controller : MonoBehaviour
 		leftTimer.Enabled = true;
 
 		byte[] data = Encoding.ASCII.GetBytes(s);
-		print("Sending String");
+		print("Sending String to " + _deviceAddressLeft);
 		BluetoothLEHardwareInterface.WriteCharacteristic (_deviceAddressLeft, ServiceUUID, WriteCharacteristic, data, data.Length, true, (characteristicUUID) => {
 			BluetoothLEHardwareInterface.Log ("Write Succeeded");
 		});
@@ -553,7 +553,7 @@ public class Controller : MonoBehaviour
 
 		//TODO: need to specify who we are sending what t
 		byte[] data = Encoding.ASCII.GetBytes(s);
-		print("Sending String");
+		print("Sending String to " + _deviceAddressRight);
 		BluetoothLEHardwareInterface.WriteCharacteristic (_deviceAddressRight, ServiceUUID, WriteCharacteristic, data, data.Length, true, (characteristicUUID) => {
 			BluetoothLEHardwareInterface.Log ("Write Succeeded");
 		});
@@ -629,8 +629,11 @@ public class Controller : MonoBehaviour
 
 	public void connectToNew(string name, string address)
 	{
+		Debug.Log ("scoot " + ModifyLeft.ToString ());
+
 		if (ModifyLeft) {
-			storedDeviceAddressLeft = _deviceAddressLeft = address;
+			storedDeviceAddressLeft = address;
+			_deviceAddressLeft = address;
 			LeftName = name;
 
 			string rightHandTemp = PlayerPrefs.GetString ("Right Address");
@@ -640,9 +643,10 @@ public class Controller : MonoBehaviour
 			}
 
 			PlayerPrefs.SetString ("Left Address", address);
-			SetState (States.Connect, 0.1f);
+			SetState (States.ConnectPrimary, 0.1f);
 		} else {
-			storedDeviceAddressRight = _deviceAddressRight = address;
+			storedDeviceAddressRight = address;
+			_deviceAddressRight = address;
 			RightName = name;
 
 			string leftHandTemp = PlayerPrefs.GetString ("Left Address");
